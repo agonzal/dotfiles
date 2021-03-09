@@ -8,7 +8,7 @@ The base setup is [Axarva's dotfiles-2.0 repo](http://www.github.com/Axarva/dotf
 
 
 
-![xmonad-setup](/images/workflow/xmonad-setup.png)
+![xmonad-setup](/screenshots/xmonad-setup.png)
 
 Current
 
