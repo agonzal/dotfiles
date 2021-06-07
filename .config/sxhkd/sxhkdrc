@@ -1,0 +1,221 @@
+#    _______  ___ ___  ___ ___ ___ ___  ______   
+#   |   _   |(   Y   )|   Y   |   Y   )|   _  \  
+#   |   1___| \  1  / |.  1   |.  1  / |.  |   \ 
+#   |____   | /  _  \ |.  _   |.  _  \ |.  |    \
+#   |:  1   |/:  |   \|:  |   |:  |   \|:  1    /
+#   |::.. . (::. |:.  |::.|:. |::.| .  |::.. . / 
+#   `-------'`--- ---'`--- ---`--- ---'`------'  
+#                agonzal's dotfiles                                                
+
+# launch kitty 
+super + Return
+      kitty
+
+# (test) kitty drop-down 
+alt + s
+      tdrop --wm bspwm -ma -h 25% -w 50% -x 25% kitty --class dropdown 
+
+alt + m 
+      tdrop --wm bspwm -ma -h 25% -w %50 -x 25% thunar 
+
+# kitty drop down scratchpad 
+super + u
+      ~/bin/scratchpad kitty kitty --take-first 
+
+# rofi 
+super + space 
+      ~/bin/launcher.sh
+
+# lockscreen 
+super + F1
+     betterlockscreen -l blur 
+## Thunar file-manager
+super + alt + f
+     ~/bin/scratchpad thunar thunar 
+
+# telegram 
+alt + t
+     telegram-desktop
+
+# toggle telegram scratchpad
+alt + c
+   scratchpad TelegramDesktop telegram-desktop
+
+# bitwarden-rofi
+super + alt + p 
+     bwmenu 
+
+#picom
+alt + p
+     picom -fb 
+
+#kill picom
+alt + shift + p
+     killall -q picom
+
+# Dofi (tasks)
+alt + d
+     ~/bin/dofi
+
+# rofi help (keybindings)
+super + @slash
+     rofi-help
+
+##################
+# bspwm hotkeys # 
+##################
+
+# kill / close app
+super + {_,alt + }x
+    bspc node -{c,k}
+
+# quit/restart bspwm
+super + alt + {q,r}
+     bspc {quit,wm -r}
+
+# Reload sxhkdrc
+super + shift + r
+     pkill -USR1 -x sxhkd; notify-send 'sxhkd' 'Reloaded config'
+
+# rofi-screenshot 
+Print
+     ~/bin/rofi-screenshot
+
+# kill recordings. 
+super + Print
+     pkill ffmpeg  
+
+
+# alternate between the tiled and monocle layout
+alt + Tab
+	bspc desktop -l next
+
+# send the newest marked node to the newest preselected node
+super + y
+	bspc node newest.marked.local -n newest.!automatic.local
+
+# swap the current node and the biggest node
+super + g
+	bspc node -s biggest
+
+#
+# state/flags
+#
+
+# set the window state
+super + {d,shift + d,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# set the node flags
+super + ctrl + {m,x,y,z}
+	bspc node -g {marked,locked,sticky,private}
+
+#
+# focus/swap
+#
+
+# focus the node in the given direction
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+
+# focus the node for the given path jump
+super + {p,b,comma,period}
+	bspc node -f @{parent,brother,first,second}
+
+# focus the next/previous node in the current desktop
+super + {_,shift + }c
+	bspc node -f {next,prev}.local
+
+# focus the next/previous desktop in the current monitor
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+
+# focus the last node/desktop
+super + {grave,Tab}
+	bspc {node,desktop} -f last
+
+# focus the older or newer node in the focus history
+super + {o,i}
+	bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+
+# focus or send to the given desktop
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# preselect the direction
+super + ctrl + {h,j,k,l}
+	bspc node -p {west,south,north,east}
+
+# preselect the ratio
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+
+# cancel the preselection for the focused node
+super + ctrl + space
+	bspc node -p cancel
+
+# cancel the preselection for the focused desktop
+super + ctrl + shift + space
+	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+# expand a window by moving one of its side outward
+alt + {h,j,k,l}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# contract a window by moving one of its side inward
+alt + shift + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# move a floating window
+super + {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
+
+# ower/Raise Volume
+XF86Audio{LowerVolume,RaiseVolume}
+    amixer -q sset Master 5%{-,+}
+
+# Audio mute 
+XF86AudioMute
+    amixer -q set Master toggle
+
+# WWW key
+XF86WWW
+    google-chrome-stable 
+
+# Search key
+XF86Search
+     thunar  
+
+# Mail key
+XF86Mail
+    evolution 
+
+super + w
+	id=$(bspc query -N -n "focused");\
+	if [ -n "$id" ];then \
+		xprop -id $id -f _SCRATCH 32ii -set _SCRATCH $(date +%s,%N);\
+		bspc node -t "floating";\
+		xdotool windowunmap $id;\
+	fi
+
+super + shift + w
+	i=$(bspc query -N -n "focused.floating");\
+	if [ -n "$i" ];then \
+		xprop -id $i -f _SCRATCH 32ii -set _SCRATCH $(date +%s,%N);\
+		xdotool windowunmap $i;\
+	else;\
+		i=$(for w in $(xwininfo -root -children | grep -e "^\s*0x[0-9a-f]\+" -o);do \
+			t=$(xprop -id $w _SCRATCH | grep ' = \(.*\)');\
+			if [ -n "$t" ];then \
+				echo $t $w;\
+			fi;\
+		done|sort -n|head -n1|cut -d" " -f 5);\
+		if [ -n "$i" ];then \
+			xprop -id $i -remove _SCRATCH;\
+			bspc rule -a \* state=floating center=on --one-shot;\
+			xdotool windowmap $i;\
+			bspc node -f $i;\
+		fi;\
+	frun i

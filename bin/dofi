@@ -1,0 +1,326 @@
+#!/usr/bin/env bash
+
+# default settings
+_rofi () {
+    rofi -regex -tokenize -i -lines 30 -width 1500 -no-levenshtein-sort "$@"
+}
+noteroot="$HOME/.tasks/todo"
+done_notes="${noteroot}/todo/done"
+BROWSER=chromium
+url_length=100
+
+# hotkeys
+switch="Alt+Tab"
+switch_agenda="Alt+a"
+new="Alt+n"
+task_icon=""
+
+
+# colors
+title_color="#2d7ed8"
+date_color="#FF00FF"
+
+# load custom settings
+source $HOME/.config/dofi/config
+
+agenda=0
+
+listtodo () {
+    list=$(for i in *.todo; do sort "${i}" | sed '/^123/d' | awk -F ': ' '{ print $2 }' | tr '\n' '\t' | sed -e "s/$/                                                                                                                                       file: $i/"; echo; done | sort | column -s $'\t' -t)
+    high=$(echo "${list}" | grep -n "^1" | cut -f1 -d:)
+    high=$(echo "$high" | while read line; do echo $(( $line + 1 )); done | sed ':a;N;$!ba;s/\n/, /g')
+    medium=$(echo "${list}" | grep -n "^2" | cut -f1 -d:)
+    medium=$(echo "$medium" | while read line; do echo $(( $line + 1 )); done | sed ':a;N;$!ba;s/\n/, /g')
+}
+
+listbydate () {
+    unset high
+    unset medium
+    list=$(for i in *.todo; do sort "${i}" | sed 's/^abc:.*/abc: /' | awk -F ': ' '{ print $2 }' | tr '\n' '\t' | sed -e "s/$/                                                                                                                                       file: $i/"; echo; done | sort | sed '/^--------/d' | column -s $'\t' -t)
+}
+
+main () {
+    if [[ -n ${done} ]]; then
+        notes="${done_notes}"
+        view="done"
+    else
+        notes="${noteroot}"
+        view="active"
+    fi
+    cd "${notes}"
+    HELP="Welcome to dofi. Use <span color='${title_color}'>${new}</span> to create a new todo
+Use <span color='${title_color}'>${switch}</span> to switch between active/done todos. <span color='${title_color}'>${switch_agenda}</span> switches agenda view."
+    if [[ $agenda == "1" ]]; then
+      export view="agenda"
+      listbydate
+    else
+      listtodo
+    fi
+    file=""
+    if [[ -n ${done} ]]; then
+        mainmenu=$(echo -e "< Exit\n---\n${list}" | _rofi -kb-custom-1 "${new}" -kb-custom-2 "${switch}" -kb-custom-3 "${switch_agenda}" -mesg "${HELP}" -dmenu -p ""${view}" > ")
+    else
+        mainmenu=$(echo -e "< Exit\n---\n${list}" | _rofi -kb-custom-1 "${new}" -kb-custom-2 "${switch}" -kb-custom-3 "${switch_agenda}" -u "${high}" -a "${medium}" -mesg "${HELP}" -dmenu -p ""${view}" > ")
+    fi
+    val=$?
+    if [[ $val -eq 12 ]]; then
+      if [[ $agenda == "1" ]]; then
+        agenda=0 main
+      elif [[ $agenda == "0" ]]; then
+        agenda=1 main
+      fi
+    elif [[ $val -eq 10 ]]; then
+        newitem
+    elif [[ $val -eq 1 ]]; then exit
+    elif [[ $val -eq 0 ]]; then
+        if [[ $mainmenu == "< Exit" ]]; then exit
+        elif [[ $mainmenu == "---" ]]; then main
+        else
+            if [[ -n ${done} ]]; then
+                donemenu
+            else
+                optionsmenu
+            fi
+        fi
+    elif [[ $val -eq 11 ]]; then
+        if [[ -z "${done}" ]]; then
+            done="true" main
+        elif [[ -n "${done}" ]]; then
+            done=""
+            main
+        fi
+    fi
+}
+
+newitem () {
+    title=$(echo -e "< Cancel" | _rofi -dmenu -mesg "Title for new task" -p "> ")
+    val=$?
+    if [[ $val -eq 1 ]]; then exit
+    else
+        if [[ $title == "< Cancel" ]]; then main
+        else :
+        fi
+    fi
+    group=$(echo -e "< Cancel\n---\n$(grep -how '\+.*' *.todo | sort -u | sed 's/, /\n/g')" | _rofi -dmenu -p "> " -mesg "Enter Group or chose one below")
+    val=$?
+    if [[ $val -eq 1 ]]; then exit
+    else
+        if [[ $group == "< Cancel" ]]; then main
+        else :
+        fi
+    fi
+    tags=$(echo -e "< Cancel\nNOTAG\n$(grep -how '\@.*' *.todo | sed 's/, /\n/g' | sort -u)" | _rofi -dmenu -p "> " -mesg "Enter Tags (comma separated) or chose below (Use <span color='${title_color}'>Space+Enter</span> to multi-select)")
+    val=$?
+    if [[ $val -eq 1 ]]; then exit
+    else
+        if [[ $tags == "< Cancel" ]]; then main
+        elif [[ $tags == "NOTAG" ]]; then export tags=""
+        else :
+        fi
+
+    fi
+    tags=$(echo "$tags" | sed ':a;N;$!ba;s/\n/, /g' | sort | uniq)
+    newfile=$(date +'%Y-%m-%d-%H%M%S'.todo)
+    echo -e "123: --------\nabc: 3\ncaption: ${title}\ngroup: ${group}\ntags: ${tags}" >> "${notes}/${newfile}"
+    file=${newfile} optionsmenu
+}
+
+
+editmenu () {
+    if [[ -z $file ]]; then
+        file=$(echo ${mainmenu} | awk -F 'file: ' '{ print $2 }')
+    fi
+    sort "${file}"
+    listitems=$(echo -e "< Return\n---\n$(sort ${notes}/${file})" | _rofi -dmenu -p "> ")
+    val=$?
+    if [[ $val -eq 1 ]]; then exit
+    elif [[ $val -eq 0 ]]; then
+        if [[ $listitems == "< Return" ]]; then main
+        elif [[ $listitems == "---" ]]; then :
+        else
+            field=$(echo ${listitems} | awk -F ': ' '{ print $1 }')
+            value=$(echo ${listitems} | awk -F ': ' '{ print $2 }')
+            inputmenu=$(echo "" | _rofi -dmenu -p "> " -mesg "Enter new value for ${field}" -filter "${value}")
+            val=$?
+            if [[ $val -eq 1 ]]; then exit
+            else
+                sed -i "/^${field}/ d" "${notes}/${file}"
+                echo "${field}: ${inputmenu}" >> "${notes}/${file}"
+            fi
+        fi
+    fi
+    main
+}
+
+optionsmenu () {
+    if [[ -z $file ]]; then
+        file=$(echo ${mainmenu} | awk -F 'file: ' '{ print $2 }')
+    fi
+    title=$(grep -P '^caption: ' "${notes}/${file}" | awk -F 'caption: ' '{ print $2 }')
+    deadline=$(grep -P '^123: ' "${notes}/${file}" | awk -F '123: ' '{ print $2 }')
+    if [[ $deadline == "--------" ]]; then
+      deadline=""
+    fi
+    url=$(grep -P '^url: ' "${notes}/${file}" | awk -F 'url: ' '{ print $2 }')
+    if [[ ${#url} -lt "${url_length}" ]]; then
+        help_url="$(echo "${url}" | out2html -p)"
+    elif [[ ${#url} -ge "${url_length}" ]]; then
+        help_url="$(echo "${url:0:${url_length}} [...]"  | out2html -p)"
+    fi
+    if [[ -z $url ]]; then
+        if [[ -z $deadline ]]; then
+            HELP="Item: <span color='${title_color}'>${title}</span>"
+            doopt=$(echo -e "< Return\n---\n1. Mark Done\n2. Delete\n3. Set Priority\n4. Set Deadline\n5. Edit\n---\n5. Add URL"| _rofi -mesg "${HELP}" -dmenu -p "> ")
+        else
+            HELP="Item: <span color='${title_color}'>${title}</span>
+Deadline: <span color='${date_color}'>${deadline}</span>"
+        doopt=$(echo -e "< Return\n---\n1. Mark Done\n2. Delete\n3. Set Priority\n4. Unset Deadline\n5. Edit\n---\n5. Add URL"| _rofi -mesg "${HELP}" -dmenu -p "> ")
+        fi
+    else
+        if [[ -z $deadline ]]; then
+            HELP="Item: <span color='${title_color}'>${title}</span>
+URL:  <span color='${title_color}'>${help_url}</span>"
+            doopt=$(echo -e "< Return\n---\n1. Mark Done\n2. Delete\n3. Set Priority\n4. Set Deadline\n5. Edit\n---\n5. Open URL\n6. Delete URL"| _rofi -mesg "${HELP}" -dmenu -p "> ")
+        else
+            HELP="Item: <span color='${title_color}'>${title}</span>
+URL:  <span color='${title_color}'>${help_url}</span>
+Deadline: <span color='${date_color}'>${deadline}</span>"
+        doopt=$(echo -e "< Return\n---\n1. Mark Done\n2. Delete\n3. Set Priority\n4. Unset Deadline\n5. Edit\n---\n5. Open URL\n6. Delete URL"| _rofi -mesg "${HELP}" -dmenu -p "> ")
+        fi
+    fi
+    val=$?
+    if [[ $val -eq 1 ]]; then exit
+    else
+        if [[ $doopt == "5. Open URL" ]]; then $BROWSER "${url}"
+        elif [[ $doopt == "1. Mark Done" ]]; then mv "${notes}/${file}" "${done_notes}"; main
+        elif [[ $doopt == "2. Delete" ]]; then delitem
+        elif [[ $doopt == "3. Set Priority" ]]; then setpriority
+        elif [[ $doopt == "4. Set Deadline" ]]; then setDate
+        elif [[ $doopt == "4. Unset Deadline" ]]; then rmDate
+        elif [[ $doopt == "5. Edit" ]]; then editmenu
+        elif [[ $doopt == "< Return" ]]; then main
+        elif [[ $doopt == "5. Add URL" ]]; then addURL
+        elif [[ $doopt == "6. Delete URL" ]]; then delURL
+        elif [[ $doopt == "---" ]]; then optionsmenu
+        fi
+    fi
+}
+
+setDate () {
+  foo=$(date +'%Y-%m-%d')
+  s_date=$(seq 1 120 | xargs -I {} date -d "${foo} {} days" +'%Y-%m-%d' | rofi -dmenu -i -no-levenshtein)
+  sed -i "/^deadline: / d" "${notes}/${file}"
+  echo "123: ${s_date}" >> "${notes}/${file}"
+  optionsmenu
+}
+
+rmDate () {
+  sed -i "s/^123:.*/123: --------/" "${notes}/${file}"
+  optionsmenu
+}
+
+donemenu () {
+    if [[ -z $file ]]; then
+        file=$(echo ${mainmenu} | awk -F 'file: ' '{ print $2 }')
+    fi
+    title=$(grep -P '^caption: ' "${notes}/${file}" | awk -F 'caption: ' '{ print $2 }')
+    url=$(grep -P '^url: ' "${notes}/${file}" | awk -F 'url: ' '{ print $2 }')
+    help_url="$(echo "${url:0:${url_length}}" | out2html -p)"
+    if [[ -z $url ]]; then
+        HELP="Item: <span color='${title_color}'>${title}</span>"
+        doopt=$(echo -e "< Return\n---\n1. Mark Active\n2. Delete" | _rofi -mesg "${HELP}" -dmenu -p "> ")
+    else
+        HELP="Item: <span color='${title_color}'>${title}</span>
+URL:  <span color='${title_color}'>${help_url}</span>"
+        doopt=$(echo -e "< Return\n---\n1. Mark Active\n2. Delete\n---\n3. Open URL"| _rofi -mesg "${HELP}" -dmenu -p "> ")
+    fi
+    val=$?
+    if [[ $val -eq 1 ]]; then exit
+    else
+        if [[ $doopt == "3. Open URL" ]]; then $BROWSER "${url}"
+        elif [[ $doopt == "1. Mark Active" ]]; then mv "${notes}/${file}" "${noteroot}"; main
+        elif [[ $doopt == "2. Delete" ]]; then delitem
+        elif [[ $doopt == "< Return" ]]; then main
+        elif [[ $doopt == "---" ]]; then optionsmenu
+        fi
+    fi
+}
+
+addURL () {
+    if [[ -z $file ]]; then
+        file=$(echo ${mainmenu} | awk -F 'file: ' '{ print $2 }')
+    fi
+    urlmenu=$(echo -e "< Cancel" | _rofi -dmenu -mesg "Add URL to ${title}" -p "> ")
+    val=$?
+    if [[ $val -eq 1 ]]; then
+        exit
+    elif [[ $val -eq 0 ]]; then
+        if [[ $urlmenu == "< Cancel" ]]; then
+            optionsmenu
+        else
+            echo "url: ${urlmenu}" >> "${notes}/${file}"
+            optionsmenu
+        fi
+    fi
+}
+
+delURL () {
+    if [[ -z $file ]]; then
+        file=$(echo ${mainmenu} | awk -F 'file: ' '{ print $2 }')
+    fi
+    urlmenu=$(echo -e "1. Yes\n2. No" | _rofi -dmenu -mesg "Delete URL ${url}?" -p "> ")
+    val=$?
+    if [[ $val -eq 1 ]]; then
+        exit
+    elif [[ $val -eq 0 ]]; then
+        if [[ $urlmenu == "1. Yes" ]]; then sed -i '/^url: / d' "${notes}/${file}"
+        elif [[ $urlmenu == "2. No" ]]; then :
+        fi
+        optionsmenu
+    fi
+}
+
+delitem () {
+    if [[ -z $file ]]; then
+        file=$(echo ${mainmenu} | awk -F 'file: ' '{ print $2 }')
+    fi
+    itemmenu=$(echo -e "1. Yes\n2. No" | _rofi -dmenu -mesg "Delete item ${title}?" -p "> ")
+    val=$?
+    if [[ $val -eq 1 ]]; then
+        exit
+    elif [[ $val -eq 0 ]]; then
+        if [[ $itemmenu == "1. Yes" ]]; then rm -f "${notes}/${file}"
+        elif [[ $itemmenu == "2. No" ]]; then :
+        fi
+        main
+    fi
+}
+
+setpriority () {
+    if [[ -z $file ]]; then
+        file=$(echo ${mainmenu} | awk -F 'file: ' '{ print $2 }')
+    fi
+    title=$(awk -F 'caption: ' '{ print $2 }' "${notes}/${file}")
+    priomenu=$(echo -e "< Return\n---\n1\n2\n3" | _rofi -dmenu -p "> " -mesg "Set Priority for item ${title}")
+    val=$?
+    if [[ $val -eq 1 ]]; then exit
+    else
+        if [[ $priomenu == "< Return" ]]; then optionsmenu
+        elif [[ $priomenu == "---" ]]; then setpriority
+        else
+            sed -i "/^abc: / d" "${notes}/${file}"
+            echo "abc: ${priomenu}" >> "${notes}/${file}"
+        fi
+    fi
+    optionsmenu
+}
+
+if [[ ! -d "$noteroot" ]]; then
+    echo "Error: Directory ${noteroot} does not exist"
+    exit
+fi
+if [[ ! -d "$done_notes" ]]; then
+    echo "Error: Directory ${done_notes} does not exist"
+    exit
+fi
+main

@@ -1,0 +1,88 @@
+# Minimal configuration for Neomutt/Mutt and Gmail/G Suite
+
+# Decrypts passwords quietly
+# see: https://wiki.archlinux.org/index.php/Mutt#Passwords_management
+source "gpg -dq $HOME/.my-pwds.gpg |"
+#source ~/.mutt/wombat.muttcolors
+
+
+# Set from / name / etc..
+set realname                    = "Albert Gonzalez"
+set use_from                    = "yes"
+set envelope_from               = "yes"
+
+# Username and password for your Gmail/G Suite account
+set imap_user                   = "albgnz@gmail.com"
+
+# Password assigned from decrypted file
+set imap_pass                   = $my_pass
+
+# Specifies the default location of your mailboxes
+set folder                      = "imaps://imap.gmail.com:993"
+
+# Configure Simple Mail Transfer Protocol for sending mail
+# for Gmail
+set smtp_url                    = "smtp://albgnz@smtp.gmail.com:587"
+set smtp_pass                   = $my_pass
+
+# activate TLS / force ssl
+set ssl_starttls                = yes
+set ssl_force_tls               = yes 
+
+# Location of inbox
+set spoolfile                   = +INBOX
+
+# Activate caching, as it can greatly improve speed
+set header_cache                = "~/.mutt/cache/headers"
+set message_cachedir            = "~/.mutt/cache/bodies"
+
+# Set record to Sent Mail and postponed to Drafts on gmail. 
+set postponed                   = "imaps://imap.gmail.com/[Gmail]/Drafts"
+set record                      = "imaps://imap.gmail.com/[Gmail]/Sent Mail"
+
+# You can use any gmail imap mailboxes
+mailboxes =INBOX =[Gmail]/Personal =[Gmail]/Sent\ Mail =[Gmail]/Drafts =[Gmail]/Spam =[Gmail]/Trash
+
+
+# UI 
+
+set sidebar_visible 
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+set mail_check_stats
+
+# https://www.neomutt.org/guide/reference search sleep_time for additional info
+set sleep_time                  = 0 # be faster
+set beep                        = no # no beep sound
+auto_view text/html
+set sort                        = reverse-date   # default sorting by date
+
+# When sorting by threads, this variable controls how threads are sorted
+# in relation to other threads, and how the branches of the thread trees are sorted.
+set sort_aux                    = last-date-received
+
+# Index page format. Default "%4C %Z %{%b %d} %-15.15L (%?l?%4l&%4c?) %s"
+set index_format="%4C %Z %{%b %d %R} %-15.15L (%?l?%4l&%4c?) %s"
+
+# Vim like binds
+bind attach,index,pager \CD next-page
+bind attach,index,pager \CU previous-page
+bind pager g top
+bind pager G bottom
+bind attach,index g first-entry
+bind attach,index G last-entry
+
+# Misc. bindings
+bind index \ei imap-fetch-mail	# force reread of imap
+
+# Sidebar binds
+bind index,pager \CP sidebar-prev                 # Ctrl-n to select next folder
+bind index,pager \CN sidebar-next                 # Ctrl-p to select previous folder
+bind index,pager \CI sidebar-open                 # Ctrl-o to open selected folder
+bind index,pager \CB sidebar-toggle-visible       # Ctrl-b to toggle visibility of the sidebar
+
+## colors
+#
+
+set my_bg               = "#1b1e23"
+
+set index color #1e222a

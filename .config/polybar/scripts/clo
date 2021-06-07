@@ -1,0 +1,12 @@
+PDIR="$HOME/.config/polybar"
+LAUNCH="polybar-msg cmd restart"
+
+sed -i -e 's/shade1 = .*/shade1 = #FFA000/g' $PDIR/config.ini
+sed -i -e 's/shade2 = .*/shade2 = #FFB300/g' $PDIR/config.ini
+sed -i -e 's/shade3 = .*/shade3 = #FFC107/g' $PDIR/config.ini
+sed -i -e 's/shade4 = .*/shade4 = #FFCA28/g' $PDIR/config.ini
+sed -i -e 's/shade5 = .*/shade5 = #FFD54F/g' $PDIR/config.ini
+sed -i -e 's/shade6 = .*/shade6 = #FFE082/g' $PDIR/config.ini
+sed -i -e 's/bg = .*/bg = #aa000000/g' $PDIR/config.ini
+# Restarting polybar
+$LAUNCH &
