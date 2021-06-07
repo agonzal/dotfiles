@@ -139,7 +139,7 @@ Set this crontab entry for friendly posture reminders.
 
 ## BSPWM 
 
-![bspwm onedarkish](screenshots/itsdark.png)
+![bspwm onedarkish](/screenshot/itsdark.png)
 
 Current setup is using BSPWM w/ SXHKD for keybindings. If you are wanting to use this setup, you can always use Super+/ to get a rofi window showing you the keybindings being utilized by default if you'd made no changes. 
 
