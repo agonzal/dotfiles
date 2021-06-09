@@ -7,6 +7,6 @@ Encoding=UTF-8
 [X-GNOME-Metatheme]
 GtkTheme=oomox-shiki-brave-dark-compact
 MetacityTheme=onedarkish
-IconTheme=Adwaita
-CursorTheme=Adwaita
+IconTheme=Winter
+CursorTheme=Future Dark Cursors
 CursorSize=24
