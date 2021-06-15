@@ -3,7 +3,15 @@
       * [Plugins](#plugins)
       * [Keybindings](#keybindings)
    * [ZSH](#zsh)
-      
+████████▄   ▄██████▄      ███        ▄████████  ▄█   ▄█          ▄████████    ▄████████ 
+███   ▀███ ███    ███ ▀█████████▄   ███    ███ ███  ███         ███    ███   ███    ███ 
+███    ███ ███    ███    ▀███▀▀██   ███    █▀  ███▌ ███         ███    █▀    ███    █▀  
+███    ███ ███    ███     ███   ▀  ▄███▄▄▄     ███▌ ███        ▄███▄▄▄       ███        
+███    ███ ███    ███     ███     ▀▀███▀▀▀     ███▌ ███       ▀▀███▀▀▀     ▀███████████ 
+███    ███ ███    ███     ███       ███        ███  ███         ███    █▄           ███ 
+███   ▄███ ███    ███     ███       ███        ███  ███▌    ▄   ███    ███    ▄█    ███ 
+████████▀   ▀██████▀     ▄████▀     ███        █▀   █████▄▄██   ██████████  ▄████████▀  
+                                                    ▀                                   
 ## Introduction 
 
 In this repository you will find my various dotfiles for your consumption. These days I find myself using various virtualization deployments that I needed to standarize my environment and make it reproduable with as little a headache as possible. I recently moved my workflow to only using a Tiling window manager such as Xmonad and bspWM with keybindings for launching and app navigation and I really dig the no titlebars look, it makes for a much cleaner experience. I am also a firm believer that your desktop should be personal and customized experience and I tend to invest some time into doing just that. The main branch will house the configs of the supporting cast of applications i use almost daily. My configs change to coincide with my current colorscheme and theme so this repo will be broken down with each unique setup having its own branch. As of now, that only consists of Xmonad and Bspwm setup.  I do not plan on evaluating any other Tiling window managers as I have these to a point that works beautifully for me and my workflow. Hopefully I have documented them enough for you to be able to clone the setup or utilize different aspects of each one. 
@@ -33,25 +41,25 @@ I also use vim-tmux-pilot by sourcing pilot.tmux from my tmux config. This is in
 
 ### Keybindings
 
-| Keys                           | Command           |
-|--------------------------------|-------------------|
-| <kbd>Ctrl</kbd>+<kbd>A</kbd>   | send-prefox       |
-| <kbd>Ctrl</kbd>+<kbd>Y</kbd>	 | sync panes 	     |
-| <kbd>x</kbd>		         | kill-pane 	     |
-| <kbd>X</kbd>			 | kill-window 	     |
-| <kbd>_ </kbd>			 | split-window -v   |
-| <kbd> \| </kbd>		 | splint-window -h  |
-| <kbd>z</kbd> 		 	 | resize-pane -Z    |
-| <kbd>-</kbd> 		 	 | resize-pane -D 20 |
-| <kbd>+</kbd> 		 	 | resize-pane -U 20 |
-| <kbd><</kbd>                   | resize-pane -L 20 | 
-|  <kbd> > </kbd> 		 | resize-pane -R 20 |
+| Keys                           | Command          |
+|--------------------------------|------------------|
+| <kbd>Ctrl</kbd>+<kbd>A</kbd>   | send-prefox      |
+| <kbd>Ctrl</kbd>+<kbd>Y</kbd>	 | sync panes 		|
+| <kbd>x</kbd>			  		 | kill-pane 		|
+| <kbd>X</kbd>			 		 | kill-window 		|
+| <kbd>_</kbd>			  		 | split-window -v	|
+| <kbd> \| </kbd>		 		 | splint-window -h |
+| <kbd>z</kbd> 		 			 | resize-pane -Z   |
+| <kbd>-</kbd> 		 			 | resize-pane -D 20 |
+| <kbd>+</kbd> 		 			 | resize-pane -U 20 |
+|  "<"                       	 | resize-pane -L 20 | 
+|  <kbd> > </kbd> 		 		 | resize-pane -R 20 |
    
 
 
 ## ZSH 
 
-I run zsh shell managed by oh-my-zsh for added functions via plugins. In all honesty I probably won't be running it much longer as the spaceship prompt is no longer depemdent on oh-my-zsh for functionality. The biggest culprit for my nerely 1 second start-up time was nvm and condainit. I have moved nvm to a lazy load and plan on doing the same for conda environments moving forward. the rc is fairly straight forward, custom functions for extracting archives and editing various conf/dotfiles, those are as follows:
+I run zsh shell managed by oh-my-zsh for added functions via plugins. In all honesty I probably won't be running it much longer as the spaceship prompt is no longer depemdent on oh-my-zsh for functionality. The biggest culprit for my nerely 1 second start-up time was nvm and condainit. I have moved nvm to a lazy load and plan on doing the same for conda environments moving forward. the rc is fairly straight forward, custom functions for extracting archives and editing various confs, those are as follows:
 
 conf function
 
@@ -129,18 +137,3 @@ fi
 ```
 
 The other functions deal with lf and ranger which are both terminal based file managers (e.g. file icons for LF, able to hit q to quit ranger)
-
-
-## HEALTH
-
-Set this crontab entry for friendly posture reminders. 
-
-15 * * * * DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -i /home/electr0n/.config/dunst/images/heart.png "FIX YOUR POSTURE:              You don't want to end up hunched, do you? "
-
-## BSPWM 
-
-![bspwm onedarkish](/screenshot/itsdark.png)
-
-Current setup is using BSPWM w/ SXHKD for keybindings. If you are wanting to use this setup, you can always use Super+/ to get a rofi window showing you the keybindings being utilized by default if you'd made no changes. 
-
-I have been slow to get this repo updated, I will add the xmonad config for this very same theme/colorscheme. 

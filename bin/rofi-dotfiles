@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Options
+DOTS_GIT="$HOME/dotfiles/.git"
+PROMPT="dots: "
+
+dotfile_paths=$(/usr/bin/git --git-dir=$DOTS_GIT --work-tree=$HOME ls-tree -r main --name-only)
+
+chosen="$(echo -e "$dotfile_paths" | rofi -theme "~/.config/rofi/launcher/style.rasi" -dmenu -no-custom)"
+[ -f "$chosen" ] && kitty --class dotfiles -e nvim $chosen || dunstify "No such file"
+
