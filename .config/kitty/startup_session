@@ -1,0 +1,12 @@
+layout stack
+
+cd ~
+
+new_tab neomutt
+launch neomutt 
+
+new_tab irssi
+launch irssi 
+
+new_tab droplets
+launch zsh 
