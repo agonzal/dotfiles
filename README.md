@@ -4,7 +4,7 @@
       * [Keybindings](#keybindings)
    * [ZSH](#zsh)
    
-``````
+```
 ████████▄   ▄██████▄      ███        ▄████████  ▄█   ▄█          ▄████████    ▄████████ 
 ███   ▀███ ███    ███ ▀█████████▄   ███    ███ ███  ███         ███    ███   ███    ███ 
 ███    ███ ███    ███    ▀███▀▀██   ███    █▀  ███▌ ███         ███    █▀    ███    █▀  
@@ -13,8 +13,8 @@
 ███    ███ ███    ███     ███       ███        ███  ███         ███    █▄           ███ 
 ███   ▄███ ███    ███     ███       ███        ███  ███▌    ▄   ███    ███    ▄█    ███ 
 ████████▀   ▀██████▀     ▄████▀     ███        █▀   █████▄▄██   ██████████  ▄████████▀  
-                                                    ▀                                   ```
-
+                                                    ▀                                   
+```
 ## Introduction 
 
 In this repository you will find my various dotfiles for your consumption. These days I find myself using various virtualization deployments that I needed to standarize my environment and make it reproduable with as little a headache as possible. I recently moved my workflow to only using a Tiling window manager such as Xmonad and bspWM with keybindings for launching and app navigation and I really dig the no titlebars look, it makes for a much cleaner experience. I am also a firm believer that your desktop should be personal and customized experience and I tend to invest some time into doing just that. The main branch will house the configs of the supporting cast of applications i use almost daily. My configs change to coincide with my current colorscheme and theme so this repo will be broken down with each unique setup having its own branch. As of now, that only consists of Xmonad and Bspwm setup.  I do not plan on evaluating any other Tiling window managers as I have these to a point that works beautifully for me and my workflow. Hopefully I have documented them enough for you to be able to clone the setup or utilize different aspects of each one. 
