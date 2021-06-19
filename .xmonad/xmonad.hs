@@ -25,7 +25,7 @@ import qualified Codec.Binary.UTF8.String as UTF8
 import XMonad.Util.WorkspaceCompare 
 import XMonad.Util.SpawnOnce ( spawnOnce )
 import XMonad.Util.Run (safeSpawn, spawnPipe, runInTerm)
-import XMonad.Util.NamedScratchpad (NamedScratchpad(NS), namedScratchpadManageHook, namedScratchpadAction, customFloating)
+import XMonad.Util.NamedScratchpad (NamedScratchpad(NS), namedScratchpadManageHook, namedScratchpadAction, customFloating, namedScratchpadFilterOutWorkspace)
 
 -- XMonad Graphics 
 import Graphics.X11.ExtraTypes.XF86 
@@ -48,19 +48,17 @@ import XMonad.Actions.SpawnOn (spawnOn, manageSpawn)
 import XMonad.Actions.CycleWS (nextWS, prevWS, shiftToPrev, shiftToNext)
 import XMonad.Util.NamedWindows (getName, NamedWindow)
 
--- XMonad Layout Imports 
+-- XMonad Layout Imports
 
 import XMonad.Layout.Fullscreen
     ( fullscreenEventHook, fullscreenManageHook, fullscreenSupport, fullscreenFull )
-import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhDesktopsEventHook, ewmhDesktopsLogHook, ewmhDesktopsStartup )
+import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhDesktopsEventHook, ewmhDesktopsLogHook, ewmhDesktopsStartup)
 import XMonad.Layout.NoBorders
-import XMonad.Layout.Spiral ( spiral )
 import XMonad.Layout.ThreeColumns 
 import XMonad.Layout.Spacing ( spacingRaw, Border(Border) )
 import XMonad.Layout.SimpleFloat ( simpleFloat )
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
-import XMonad.Layout.CenteredMaster (centerMaster)
 import XMonad.Layout.Tabbed 
 import XMonad.Layout.Gaps
     ( Direction2D(D, L, R, U),
@@ -86,7 +84,7 @@ myBorderWidth   = 2
 myModMask       = mod4Mask
   
 -- myWorkspaces    = ["\63083", "\63288", "\63306", "\61723", "\63107", "\63601", "\63391", "\61713", "\61884"]
-myWorkspaces    = ["\63083", "\xf268", "\xe7c5", "\xe795", "\xfa7b", "\xf200", "\xe235", "\xfa6f", "\xf49c"]
+myWorkspaces    = ["\63083", "\xf268", "\xe7c5", "\xfad9", "\xf292", "\xf200", "\xe235", "\xfa6f", "\xf49c"]
 
 
 -- OneDark colorscheme 
@@ -106,9 +104,10 @@ myTabConfig = def { activeColor = "#b6bdca"
 
 -- myScratchpads
 myScratchPads = 
-     [ NS "terminal" (myTerminal ++ " --class scratchpad") (resource =? "kitty") myPosition
-     , NS "music" (myTerminal ++ " --class music -e cmus") (resource =? "music") myPosition
+     [ NS "terminal" (myTerminal ++ " --class scratchpad") (resource =? "scratchpad") myPosition
+     , NS "music" (myTerminal ++ " --class music -e ncmpcpp") (resource =? "music") myPosition
      , NS "bpytop"  (myTerminal ++ " --class bpytop -e bpytop") (resource =? "bpytop") myPosition
+     , NS "thunar" "thunar" (className  =? "thunar") myPosition 
  ] where myPosition = customFloating $ W.RationalRect (1/3) (1/3) (1/3) (1/3)
 
 myNormalBorderColor  = "#d19a66"
@@ -136,143 +135,147 @@ addEWMHFullscreen   = do
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch a terminal
-    [ ((modm .|. shiftMask, xK_Return          ), spawn $ XMonad.terminal conf)
+    [ ((modm .|. shiftMask,    xK_Return                   ), spawn $ XMonad.terminal conf)
 
 
-    , ((0,        xF86XK_WWW                   ), spawn "google-chrome-stable")
-    , ((mod1Mask,          xK_f                ), spawn "thunar")
-    , ((modm,              xK_c                ), spawn "calibre") 
-    , ((0,        xF86XK_Mail                  ), spawn "evolution")
+    , ((0,                     xF86XK_WWW                  ), spawn "google-chrome-stable")
+    , ((mod1Mask,              xK_f                        ), spawn "thunar")
+    , ((modm,                  xK_c                        ), spawn "calibre") 
+    , ((0,                     xF86XK_Mail                 ), spawn "evolution")
     
-    , ((modm .|. mod1Mask, xK_f                ), sendMessage $ Toggle NBFULL)
-    -- lock screen
-    , ((modm,              xK_F1               ), spawn "~/bin/betterlockscreen -l blur") 
+    , ((modm .|. mod1Mask,     xK_f                        ), sendMessage $ Toggle NBFULL)
+    , ((modm .|. mod1Mask,     xK_n                        ), sendMessage $ Toggle NOBORDERS)
 
-    -- launch rofi and htop 
-    , ((0,        xF86XK_Search                ), spawn "google-chrome-stable")
-    , ((modm,               xK_o               ), spawn "~/bin/launcher.sh")
-    , ((modm,               xK_p               ), spawn "kitty -e htop")
+    -- lock screen
+    , ((modm,                  xK_F1                       ), spawn "~/bin/betterlockscreen -l blur") 
+
+    -- launch rofi, dofi and bwmenu  
+    , ((0,                     xF86XK_Search               ), spawn "google-chrome-stable")  -- for myy goldtouch keyboard 
+    , ((modm,                  xK_o                        ), spawn "~/bin/launcher.sh")
+    , ((modm,                  xK_p                        ), spawn "kitty -e htop")
+    , ((modm .|. mod1Mask,     xK_p                        ), spawn "bwmenu")
 
     -- Task management via todo-txt and rofi. 
-    , ((modm,               xK_d               ), spawn "exec ~/bin/dofi")
+    , ((modm,                  xK_d                        ), spawn "exec ~/bin/dofi")
 
     -- Launch slack / lightcord
-    , ((modm,               xK_s               ), spawn "slack")
-    , ((modm .|. mod1Mask,  xK_d               ), spawn "lightcord")
+    , ((modm,                  xK_s                        ), spawn "slack")
+    , ((modm .|. mod1Mask,     xK_d                        ), spawn "lightcord")
 
     -- Audio keys
-    , ((0,         xF86XK_AudioPlay), spawn "playerctl play-pause")
-    , ((0,         xF86XK_AudioPrev), spawn "playerctl previous")
-    , ((0,         xF86XK_AudioNext), spawn "playerctl next")
+    , ((0,                     xF86XK_AudioPlay            ), spawn "playerctl play-pause")
+    , ((0,                     xF86XK_AudioPrev            ), spawn "playerctl previous")
+    , ((0,                     xF86XK_AudioNext            ), spawn "playerctl next")
     
-    , ((0,        xF86XK_AudioRaiseVolume      ), spawn "amixer sset Master 5%+")
-    , ((0,        xF86XK_AudioLowerVolume      ), spawn "amixer sset Master 5%-")
-    , ((0,        xF86XK_AudioMute             ), spawn "amixer sset Master toggle")
+    , ((0,                     xF86XK_AudioRaiseVolume     ), spawn "amixer sset Master 5%+")
+    , ((0,                     xF86XK_AudioLowerVolume     ), spawn "amixer sset Master 5%-")
+    , ((0,                     xF86XK_AudioMute            ), spawn "amixer sset Master toggle")
 
     -- Brightness keys
     --, ((0,                    xF86XK_MonBrightnessUp), spawn "brightnessctl s +10%")
 --    , ((0,                    xF86XK_MonBrightnessDown), spawn "brightnessctl s 10-%")
     
     -- ScratchPads mod1mask = ALT key. 
-    , ((mod1Mask,   xK_m              ), namedScratchpadAction myScratchPads "music")
-    , ((mod1Mask,   xK_t              ), namedScratchpadAction myScratchPads "terminal")
-    , ((mod1Mask,   xK_b              ), namedScratchpadAction myScratchPads "bpytop")
+    , ((mod1Mask,              xK_m                         ), namedScratchpadAction myScratchPads "music")
+    , ((mod1Mask,              xK_t                         ), namedScratchpadAction myScratchPads "terminal")
+    , ((mod1Mask,              xK_b                         ), namedScratchpadAction myScratchPads "bpytop")
+    , ((mod1Mask,              xK_f                         ), namedScratchpadAction myScratchPads "thunar")
 
     -- Screenshot 
-    , ((0,         xK_Print                    ), spawn "exec ~/bin/rofi-screenshot")
-    , ((modm,      xK_Print                    ), spawn "exec ~/bin/screenrec.sh")
-    , ((modm .|. controlMask, xK_Print         ), spawn "pkill ffmpeg")
+    , ((0,                     xK_Print                     ), spawn "exec ~/bin/rofi-screenshot")
+    , ((modm,                  xK_Print                     ), spawn "exec ~/bin/screenrec.sh")
+    , ((modm .|. controlMask,  xK_Print                     ), spawn "pkill ffmpeg")
     --, ((modm,      xK_v                      ), spawn "exec ~/bin/visualizer")
   
     -- Bitwarden 
-    , ((modm,      xK_b                        ), spawn "bitwarden-desktop") 
+    , ((modm .|. shiftMask,    xK_b                         ), spawn "bitwarden-desktop") 
 
     -- Minimize stuff
 
    -- Enable/disable xautolock 
-    , ((modm,                xK_z              ), spawn "exec ~/bin/inhibit_activate")
-    , ((modm .|. shiftMask,  xK_z              ), spawn "exec ~/bin/inhibit_deactivate")
+    , ((modm,                  xK_z                         ), spawn "exec ~/bin/inhibit_activate")
+    , ((modm .|. shiftMask,    xK_z                         ), spawn "exec ~/bin/inhibit_deactivate")
 
     -- close focused window
-    , ((modm,                xK_x              ), kill)
+    , ((modm,                  xK_x                         ), kill)
 
     --Toggle Gaps.  
-    , ((modm .|. controlMask, xK_g), sendMessage $ ToggleGaps)               -- toggle all gaps
-    , ((modm .|. shiftMask, xK_g), sendMessage $ setGaps [(L,30), (R,30), (U,30), (D,40)]) -- reset the GapSpec
+    , ((modm .|. controlMask,  xK_g                         ), sendMessage $ ToggleGaps)               -- toggle all gaps
+    , ((modm .|. shiftMask,    xK_g                         ), sendMessage $ setGaps [(L,10), (R,10), (U,10), (D,30)]) -- reset the GapSpec
 
     
-    , ((modm .|. controlMask, xK_t), sendMessage $ IncGap 10 L)              -- increment the left-hand gap
-    , ((modm .|. shiftMask, xK_t     ), sendMessage $ DecGap 10 L)           -- decrement the left-hand gap
+    , ((modm .|. controlMask,  xK_t                         ), sendMessage $ IncGap 10 L)              -- increment the left-hand gap
+    , ((modm .|. shiftMask,    xK_t                         ), sendMessage $ DecGap 10 L)           -- decrement the left-hand gap
     
-    , ((modm .|. controlMask, xK_y), sendMessage $ IncGap 10 U)              -- increment the top gap
-    , ((modm .|. shiftMask, xK_y     ), sendMessage $ DecGap 10 U)           -- decrement the top gap
+    , ((modm .|. controlMask,  xK_y                         ), sendMessage $ IncGap 10 U)              -- increment the top gap
+    , ((modm .|. shiftMask,    xK_y                         ), sendMessage $ DecGap 10 U)           -- decrement the top gap
     
-    , ((modm .|. controlMask, xK_u), sendMessage $ IncGap 10 D)              -- increment the bottom gap
-    , ((modm .|. shiftMask, xK_u     ), sendMessage $ DecGap 10 D)           -- decrement the bottom gap
+    , ((modm .|. controlMask,  xK_u                         ), sendMessage $ IncGap 10 D)              -- increment the bottom gap
+    , ((modm .|. shiftMask,    xK_u                         ), sendMessage $ DecGap 10 D)           -- decrement the bottom gap
 
-    , ((modm .|. controlMask, xK_i), sendMessage $ IncGap 10 R)              -- increment the right-hand gap
-    , ((modm .|. shiftMask, xK_i     ), sendMessage $ DecGap 10 R)           -- decrement the right-hand gap
+    , ((modm .|. controlMask,  xK_i                         ), sendMessage $ IncGap 10 R)              -- increment the right-hand gap
+    , ((modm .|. shiftMask,    xK_i                         ), sendMessage $ DecGap 10 R)           -- decrement the right-hand gap
 
      -- Cycle through layout algorithms. 
-    , ((modm,               xK_space ), sendMessage NextLayout)
+    , ((modm,                  xK_space                     ), sendMessage NextLayout)
 
     --  Reset the layouts on the current workspace to default
-    , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
+    , ((modm .|. shiftMask,    xK_space                     ), setLayout $ XMonad.layoutHook conf)
 
     -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
+    , ((modm,                  xK_n                         ), refresh)
 
     -- Move focus to the next/prev workspace
-    , ((modm,               xK_Right   ), nextWS)
-    , ((modm,               xK_Left    ), prevWS)
+    , ((modm,                  xK_Right                     ), nextWS)
+    , ((modm,                  xK_Left                      ), prevWS)
 
     -- Move focus to the next window
-    , ((modm,               xK_j     ), windows W.focusDown)
+    , ((modm,                  xK_j                         ), windows W.focusDown)
 
     -- Move focus to the previous window
-    , ((modm,               xK_k     ), windows W.focusUp  )
+    , ((modm,                  xK_k                         ), windows W.focusUp  )
 
     -- Move focus to the master window
-    , ((modm,               xK_m     ), windows W.focusMaster  )
+    , ((modm,                  xK_m                         ), windows W.focusMaster  )
 
     -- Swap the focused window and the master window
-    , ((modm,               xK_Return), windows W.swapMaster)
+    , ((modm,                  xK_Return                    ), windows W.swapMaster)
 
     -- Swap the focused window with the next window
-    , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  )
+    , ((modm .|. shiftMask,    xK_j                         ), windows W.swapDown  )
 
     -- Swap the focused window with the previous window
-    , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    )
+    , ((modm .|. shiftMask,    xK_k                         ), windows W.swapUp    )
 
     -- Shrink the master area
-    , ((modm,               xK_h     ), sendMessage Shrink)
+    , ((modm,                  xK_h                         ), sendMessage Shrink)
 
     -- Expand the master area
-    , ((modm,               xK_l     ), sendMessage Expand)
+    , ((modm,                  xK_l                         ), sendMessage Expand)
 
     -- Push window back into tiling
-    , ((modm,               xK_t     ), withFocused $ windows . W.sink)
+    , ((modm,                  xK_t                         ), withFocused $ windows . W.sink)
 
     -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
+    , ((modm,                  xK_comma                     ), sendMessage (IncMasterN 1))
 
     -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
+    , ((modm,                  xK_period                    ), sendMessage (IncMasterN (-1)))
 
     -- Toggle the status bar gap
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
-    , ((modm              , xK_b     ), sendMessage ToggleStruts)
+    , ((modm,                  xK_b                         ), sendMessage ToggleStruts)
 
     -- Quit xmonad
-    , ((modm .|. shiftMask, xK_q     ), spawn "xfce4-session-logout")
+    , ((modm .|. shiftMask,    xK_q                         ), spawn "logout")
 
     -- Restart xmonad
-    , ((modm              , xK_q     ), spawn "xmonad --recompile ; xmonad --restart")
+    , ((modm,                  xK_q                         ), spawn "xmonad --recompile ; xmonad --restart")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
-    , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+    , ((modm .|. shiftMask,    xK_slash                     ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
     ]
     ++
 
@@ -313,7 +316,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
-myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ avoidStruts ( defaultFancyBorders simpleFloat ||| tabs ||| defaultFancyBorders tiled ||| defaultFancyBorders (Mirror tiled) ||| ThreeColMid 1 (3/100) (1/2))
+myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ avoidStruts ( defaultFancyBorders simpleFloat ||| tabs ||| defaultFancyBorders tiled ||| defaultFancyBorders (Mirror tiled) ||| centered) -- ThreeColMid 1 (3/100) (1/2))
 
 
 -- avoidStruts( defaultFancyBorders tiled ||| defaultFancyBorders simpleFloat ||| tabs)
@@ -331,6 +334,8 @@ myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ avoidStruts ( defaultFancyBor
      delta   = 3/100
 
      tabs    = tabbed shrinkText myTabConfig
+
+     centered = ThreeColMid 1 (3/100) (1/2) 
 
     -- centerMaster = centerMaster (tiled ||| Tall)
 
@@ -355,11 +360,10 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScr
     , className =? "lightcord" --> doShift ( myWorkspaces !! 4 )
     , className =? "zoom" --> doShift ( myWorkspaces !! 7 )
     , className =? "Virt-manager" --> doCenterFloat 
-    , className =? "Virt-manager" --> doShift ( myWorkspaces !! 8 )
+    , className =? "Virt-manager" --> doShift ( myWorkspaces !! 7 )
     , className =? "Anaconda-Navigator" --> doFloat
     , className =? "Anaconda-Navigator" --> doShift ( myWorkspaces !! 6 )
     , className =? "Vlc" --> doFloat 
-    , className =? "Vlc" --> doShift ( myWorkspaces !! 4 ) --  
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop" --> doIgnore
     , isFullscreen --> doFullFloat
@@ -387,7 +391,7 @@ myEventHook = mempty
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
 
-myLogHook = return ()
+myLogHook = return ()  
 
 ------------------------------------------------------------------------
 -- Startup hook
@@ -399,20 +403,15 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook = do
   spawn "exec ~/bin/lock.sh"
-  spawnOnce "blueman-applet &"
-  spawnOnce "nm-applet &"
-  spawnOnce "greenclip daemon"
-  spawnOnce "picom -fb"
-  spawnOnce "dunst"
+  -- spawnOnce "blueman-applet &"
+  -- spawnOnce "nm-applet &"
+  -- spawnOnce "greenclip daemon"
+  -- spawnOnce "picom -fb"
+  -- spawnOnce "dunst"
   spawnOnce "xsetroot -cursor_name left_ptr"
-  spawnOnce "nitrogen --restore"
-  spawnOnce "~/.config/polybar/xmonad-launch.sh" 
   spawnOnce "setxkbmap -option ctrl:nocaps "
   spawnOnce "xcape -e 'Control_L=Escape'"
-  spawnOnce "xcape -e 'Super_L=Super_L|space'"
-  
-  -- spawnOnce "xfce4-panel &"
-  spawnOnce "numlockx &"
+  spawnOnce "xcape -e 'Super_L=Super_L|o'"
   setWMName "LG3D"
  -- ewmhDesktopsStartup
 
@@ -447,9 +446,9 @@ defaults = def {
 
       -- hooks, layouts
         manageHook = myManageHook, 
-        layoutHook = gaps [(L,20), (R,20), (U,30), (D,30)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
+        layoutHook = gaps [(L,10), (R,10), (U,10), (D,30)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
         handleEventHook    = myEventHook,
-        logHook            = myLogHook,          
+        logHook            = myLogHook, 
         startupHook        = myStartupHook >> addEWMHFullscreen}
 
 -- | Finally, a copy of the default bindings in simple textual tabular format.
