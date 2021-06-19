@@ -158,9 +158,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Task management via todo-txt and rofi. 
     , ((modm,                  xK_d                        ), spawn "exec ~/bin/dofi")
 
-    -- Launch slack / lightcord
+    -- Launch chats (slack / lightcord / telegram-desktop)
     , ((modm,                  xK_s                        ), spawn "slack")
     , ((modm .|. mod1Mask,     xK_d                        ), spawn "lightcord")
+    , ((modm .|. mod1Mask,     xK_t                        ), spawn "telegram-desktop")
 
     -- Audio keys
     , ((0,                     xF86XK_AudioPlay            ), spawn "playerctl play-pause")

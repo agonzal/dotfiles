@@ -1,3 +1,4 @@
+```
      ___ ___  ___ ___ _______ ______  _______ ______   
     (   Y   )|   Y   |   _   |   _  \|   _   |   _  \  
      \  1  / |.      |.  |   |.  |   |.  1   |.  |   \ 
@@ -6,7 +7,7 @@
    (::. |:.  |::.|:. |::.. . |::.|   |::.|:. |::.. . / 
     `--- ---'`--- ---`-------`--- ---`--- ---`------'  
                    -=-=-=-=-=-=-=-=-=- haskell config 
-
+```
 
 ## Config overview 
 
@@ -81,12 +82,13 @@ If I had more use=cases for them, I would utilize more scratchpads. TODO: hide N
 
 StartupHook = myStartupHook >> addEWMHFullscreen calls this for actual fullscreen support as using XMonad.Layout.Fullscreen would make certain apps fullscreen WITHIN the tiled dimensions (I am looking at you chrome)
 
+```haskell 
 addEWMHFullscreen :: X ()
 addEWMHFullscreen   = do
     wms <- getAtom "_NET_WM_STATE"
     wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
     mapM_ addNETSupported [wms, wfs]
-
+```
 
 HELP => Press Super + Shift + Front Slash (aka ?) to get an xmessage with default XMonad keybindings. Does not currently include keybindings for individual apps that i have specified but
 that can all be solved by invoking Super + O to exec ~/bin/launcher.sh to launch Rofi with OneDark colors. 
