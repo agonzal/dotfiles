@@ -32,7 +32,6 @@ export BAT_THEME="TwoDark"
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export PF_INFO="ascii title os kernel wm pkgs cpu memory shell term palette"
 export LANG=en_US.UTF-8
-export VULTR_API_KEY=WYASNE324ZOQHALDNMORM7U6FJ4KZT3O2QWQ
 export FZF_BASE=/usr/bin/fzf
 export FZF_DEFAULT_OPTS='
   --color fg:#6f737b,bg:#21252d

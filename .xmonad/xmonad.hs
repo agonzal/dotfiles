@@ -8,13 +8,13 @@
 --              agonzal @ github / dotfiles.git 
 
 import XMonad
-import Data.Monoid ()
-import Data.List (isSuffixOf, sortBy)
-import Data.Function (on)
-import System.Exit ()
+import Data.Monoid                   ()
+import Data.List                     ( isSuffixOf, sortBy )
+import Data.Function                 ( on )
+import System.Exit                   ()
 import System.IO
-import Data.Maybe (maybeToList)
-import Control.Monad ( join, when, forM_ )
+import Data.Maybe                    ( maybeToList )
+import Control.Monad                 ( join, when, forM_ )
 import qualified DBus as D
 import qualified DBus.Client as D
 import qualified XMonad.StackSet as W
@@ -23,20 +23,20 @@ import qualified Codec.Binary.UTF8.String as UTF8
 
 -- XMonad Utils
 import XMonad.Util.WorkspaceCompare 
-import XMonad.Util.SpawnOnce ( spawnOnce )
-import XMonad.Util.Run (safeSpawn, spawnPipe, runInTerm)
-import XMonad.Util.NamedScratchpad (NamedScratchpad(NS), namedScratchpadManageHook, namedScratchpadAction, customFloating, namedScratchpadFilterOutWorkspace)
+import XMonad.Util.SpawnOnce          ( spawnOnce )
+import XMonad.Util.Run                ( safeSpawn, spawnPipe, runInTerm )
+import XMonad.Util.NamedScratchpad    ( NamedScratchpad(NS), namedScratchpadManageHook, namedScratchpadAction, customFloating, namedScratchpadFilterOutWorkspace )
 
 -- XMonad Graphics 
 import Graphics.X11.ExtraTypes.XF86 
-    (xF86XK_Mail, xF86XK_WWW, xF86XK_Search, xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext)
+    ( xF86XK_Mail, xF86XK_WWW, xF86XK_Search, xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext )
 
 -- XMonad Hooks 
 import XMonad.Hooks.ManageDocks
     ( ToggleStruts(..), avoidStruts, docks, manageDocks, Direction2D(D, L, R, U) )
 import XMonad.Hooks.SetWMName
-import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, PP(..)) 
-import XMonad.Hooks.ManageHelpers ( doFullFloat, isFullscreen, doCenterFloat, isDialog )
+import XMonad.Hooks.DynamicLog        ( dynamicLogWithPP, wrap, PP(..) ) 
+import XMonad.Hooks.ManageHelpers     ( doFullFloat, isFullscreen, doCenterFloat, isDialog )
 import XMonad.Hooks.Minimize
 
 
@@ -44,19 +44,20 @@ import XMonad.Hooks.Minimize
 import FancyBorders
 
 -- XMonad Actions
-import XMonad.Actions.SpawnOn (spawnOn, manageSpawn) 
-import XMonad.Actions.CycleWS (nextWS, prevWS, shiftToPrev, shiftToNext)
-import XMonad.Util.NamedWindows (getName, NamedWindow)
-
+import XMonad.Actions.SpawnOn          ( spawnOn, manageSpawn ) 
+import XMonad.Actions.CycleWS          ( nextWS, prevWS, shiftToPrev, shiftToNext )
+import XMonad.Util.NamedWindows        ( getName, NamedWindow )
+import XMonad.Actions.UpdatePointer    ( updatePointer )
 -- XMonad Layout Imports
 
 import XMonad.Layout.Fullscreen
     ( fullscreenEventHook, fullscreenManageHook, fullscreenSupport, fullscreenFull )
-import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhDesktopsEventHook, ewmhDesktopsLogHook, ewmhDesktopsStartup)
+import XMonad.Hooks.EwmhDesktops       ( ewmh, ewmhDesktopsEventHook, ewmhDesktopsLogHook, ewmhDesktopsStartup, ewmhDesktopsEventHookCustom )
 import XMonad.Layout.NoBorders
 import XMonad.Layout.ThreeColumns 
-import XMonad.Layout.Spacing ( spacingRaw, Border(Border) )
-import XMonad.Layout.SimpleFloat ( simpleFloat )
+import XMonad.Layout.Minimize 
+import XMonad.Layout.Spacing           ( spacingRaw, Border(Border) )
+import XMonad.Layout.SimpleFloat       ( simpleFloat )
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Tabbed 
@@ -107,7 +108,7 @@ myScratchPads =
      [ NS "terminal" (myTerminal ++ " --class scratchpad") (resource =? "scratchpad") myPosition
      , NS "music" (myTerminal ++ " --class music -e ncmpcpp") (resource =? "music") myPosition
      , NS "bpytop"  (myTerminal ++ " --class bpytop -e bpytop") (resource =? "bpytop") myPosition
-     , NS "thunar" "thunar" (className  =? "thunar") myPosition 
+     , NS "ranger" (myTerminal ++ " --class ranger -e ranger") (className  =? "ranger") myPosition 
  ] where myPosition = customFloating $ W.RationalRect (1/3) (1/3) (1/3) (1/3)
 
 myNormalBorderColor  = "#d19a66"
@@ -135,52 +136,51 @@ addEWMHFullscreen   = do
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch a terminal
-    [ ((modm .|. shiftMask,    xK_Return                   ), spawn $ XMonad.terminal conf)
+    [ ((modm .|. shiftMask,    xK_Return                    ), spawn $ XMonad.terminal conf)
 
 
-    , ((0,                     xF86XK_WWW                  ), spawn "google-chrome-stable")
-    , ((mod1Mask,              xK_f                        ), spawn "thunar")
-    , ((modm,                  xK_c                        ), spawn "calibre") 
-    , ((0,                     xF86XK_Mail                 ), spawn "evolution")
+    , ((0,                     xF86XK_WWW                   ), spawn "google-chrome-stable")  -- laptop config 
+    , ((mod1Mask,              xK_f                         ), spawn "thunar")
+    , ((modm,                  xK_c                         ), spawn "calibre") 
+    , ((0,                     xF86XK_Mail                  ), spawn "evolution")
     
-    , ((modm .|. mod1Mask,     xK_f                        ), sendMessage $ Toggle NBFULL)
-    , ((modm .|. mod1Mask,     xK_n                        ), sendMessage $ Toggle NOBORDERS)
+    , ((modm .|. mod1Mask,     xK_f                         ), sendMessage $ Toggle NBFULL)
+    , ((modm .|. mod1Mask,     xK_n                         ), sendMessage $ Toggle NOBORDERS)
 
-    -- lock screen
-    , ((modm,                  xK_F1                       ), spawn "~/bin/betterlockscreen -l blur") 
+    -- lock screen ALT + L
+    , ((mod1Mask,              xK_l                         ), spawn "~/bin/betterlockscreen -l blur") 
 
-    -- launch rofi, dofi and bwmenu  
-    , ((0,                     xF86XK_Search               ), spawn "google-chrome-stable")  -- for myy goldtouch keyboard 
-    , ((modm,                  xK_o                        ), spawn "~/bin/launcher.sh")
-    , ((modm,                  xK_p                        ), spawn "kitty -e htop")
-    , ((modm .|. mod1Mask,     xK_p                        ), spawn "bwmenu")
+    -- Chrome luaunch via Search key.   
+    , ((0,                     xF86XK_Search                ), spawn "google-chrome-stable")  -- for myy goldtouch keyboard
 
-    -- Task management via todo-txt and rofi. 
-    , ((modm,                  xK_d                        ), spawn "exec ~/bin/dofi")
+    -- Launch rofi enabled scripts 
+    , ((modm,                  xK_o                         ), spawn "~/bin/launcher.sh")     -- rofi + windowcd / file / ssh / clipboard 
+    , ((modm,                  xK_p                         ), spawn "bwmenu")                -- bitwarden rofi passwd management           
+    , ((modm,                  xK_d                         ), spawn "exec ~/bin/dofi")       -- todofi (task management) 
 
     -- Launch chats (slack / lightcord / telegram-desktop)
-    , ((modm,                  xK_s                        ), spawn "slack")
-    , ((modm .|. mod1Mask,     xK_d                        ), spawn "lightcord")
-    , ((modm .|. mod1Mask,     xK_t                        ), spawn "telegram-desktop")
+    , ((modm,                  xK_s                         ), spawn "slack")
+    , ((modm .|. mod1Mask,     xK_d                         ), spawn "lightcord")
+    , ((modm .|. mod1Mask,     xK_t                         ), spawn "telegram-desktop")
 
     -- Audio keys
-    , ((0,                     xF86XK_AudioPlay            ), spawn "playerctl play-pause")
-    , ((0,                     xF86XK_AudioPrev            ), spawn "playerctl previous")
-    , ((0,                     xF86XK_AudioNext            ), spawn "playerctl next")
+    , ((0,                     xF86XK_AudioPlay             ), spawn "playerctl play-pause")
+    , ((0,                     xF86XK_AudioPrev             ), spawn "playerctl previous")
+    , ((0,                     xF86XK_AudioNext             ), spawn "playerctl next")
     
-    , ((0,                     xF86XK_AudioRaiseVolume     ), spawn "amixer sset Master 5%+")
-    , ((0,                     xF86XK_AudioLowerVolume     ), spawn "amixer sset Master 5%-")
-    , ((0,                     xF86XK_AudioMute            ), spawn "amixer sset Master toggle")
+    , ((0,                     xF86XK_AudioRaiseVolume      ), spawn "amixer sset Master 5%+")
+    , ((0,                     xF86XK_AudioLowerVolume      ), spawn "amixer sset Master 5%-")
+    , ((0,                     xF86XK_AudioMute             ), spawn "amixer sset Master toggle")
 
     -- Brightness keys
-    --, ((0,                    xF86XK_MonBrightnessUp), spawn "brightnessctl s +10%")
---    , ((0,                    xF86XK_MonBrightnessDown), spawn "brightnessctl s 10-%")
+    , ((0,                     xF86XK_MonBrightnessUp       ), spawn "brightnessctl s +10%")
+    , ((0,                     xF86XK_MonBrightnessDown     ), spawn "brightnessctl s 10-%")
     
     -- ScratchPads mod1mask = ALT key. 
     , ((mod1Mask,              xK_m                         ), namedScratchpadAction myScratchPads "music")
     , ((mod1Mask,              xK_t                         ), namedScratchpadAction myScratchPads "terminal")
     , ((mod1Mask,              xK_b                         ), namedScratchpadAction myScratchPads "bpytop")
-    , ((mod1Mask,              xK_f                         ), namedScratchpadAction myScratchPads "thunar")
+    , ((mod1Mask,              xK_f                         ), namedScratchpadAction myScratchPads "ranger")
 
     -- Screenshot 
     , ((0,                     xK_Print                     ), spawn "exec ~/bin/rofi-screenshot")
@@ -202,7 +202,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     --Toggle Gaps.  
     , ((modm .|. controlMask,  xK_g                         ), sendMessage $ ToggleGaps)               -- toggle all gaps
-    , ((modm .|. shiftMask,    xK_g                         ), sendMessage $ setGaps [(L,10), (R,10), (U,10), (D,30)]) -- reset the GapSpec
+    , ((modm .|. shiftMask,    xK_g                         ), sendMessage $ setGaps [(L,10), (R,10), (U,10), (D,35)]) -- reset the GapSpec
 
     
     , ((modm .|. controlMask,  xK_t                         ), sendMessage $ IncGap 10 L)              -- increment the left-hand gap
@@ -392,8 +392,12 @@ myEventHook = mempty
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
 
-myLogHook = return ()  
+myLogHook :: X ()
+myLogHook =
+  let noScratchpad ws = if ws == "NSP" then "" else ws
 
+  in  do
+        updatePointer (0.5, 0.5) (0, 0)
 ------------------------------------------------------------------------
 -- Startup hook
 
@@ -409,10 +413,11 @@ myStartupHook = do
   -- spawnOnce "greenclip daemon"
   -- spawnOnce "picom -fb"
   -- spawnOnce "dunst"
-  spawnOnce "xsetroot -cursor_name left_ptr"
-  spawnOnce "setxkbmap -option ctrl:nocaps "
-  spawnOnce "xcape -e 'Control_L=Escape'"
-  spawnOnce "xcape -e 'Super_L=Super_L|o'"
+  -- spawnOnce "xsetroot -cursor_name left_ptr"
+  -- spawnOnce "setxkbmap -option ctrl:nocaps "
+  -- spawnOnce "xcape -e 'Control_L=Escape'"
+  -- spawnOnce "xcape -e 'Super_L=Super_L|o'"
+  spawnOnce "exec ~/.xmonad/autostart.sh" 
   setWMName "LG3D"
  -- ewmhDesktopsStartup
 
@@ -447,7 +452,7 @@ defaults = def {
 
       -- hooks, layouts
         manageHook = myManageHook, 
-        layoutHook = gaps [(L,10), (R,10), (U,10), (D,30)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
+        layoutHook = gaps [(L,10), (R,10), (U,10), (D,35)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
         handleEventHook    = myEventHook,
         logHook            = myLogHook, 
         startupHook        = myStartupHook >> addEWMHFullscreen}
@@ -459,15 +464,12 @@ help = unlines ["Welcome to electr0n's xmonad setup. Default modifier'super'. De
     "-- launching and killing programs",
     "mod-Shift-Enter  Launch kitty",
     "mod-o            Launch rofi",
-    "mod-Shift-p      Launch gmrun",
     "mod-x            Close/kill the focused window",
     "mod-Space        Rotate through the available layout algorithms",
     "mod-Shift-Space  Reset the layouts on the current workSpace to default",
     "mod-n            Resize/refresh viewed windows to the correct size",
     "",
     "-- move focus up or down the window stack",
-    "mod-Tab        Move focus to the next window",
-    "mod-Shift-Tab  Move focus to the previous window",
     "mod-j          Move focus to the next window",
     "mod-k          Move focus to the previous window",
     "mod-m          Move focus to the master window",
@@ -481,6 +483,17 @@ help = unlines ["Welcome to electr0n's xmonad setup. Default modifier'super'. De
     "mod-h  Shrink the master area",
     "mod-l  Expand the master area",
     "",
+    "-- Gaps (Increase) Ctrl Modifier ",
+    "mod-ctrl+t   Increase Left GAP",
+    "mod-ctrl-y   Increase Up GAP",
+    "mod-ctrl-u   Increase Down GAP",
+    "mod-ctrl-i   Increase Right GAP",
+    "",
+    "-- GAPS (Decrease) Shift modifier",
+    "mod-shift-t  Decrase Left GAP",
+    "mod-shift-y  Decrease Up GAP",
+    "mod-shift-u  Decrease Down GAP",
+    "mod-shift-i  Decrease Right GAP",
     "-- floating layer support",
     "mod-t  Push window back into tiling; unfloat and re-tile it",
     "",
@@ -489,7 +502,7 @@ help = unlines ["Welcome to electr0n's xmonad setup. Default modifier'super'. De
     "mod-period (mod-.)   Deincrement the number of windows in the master area",
     "",
     "-- quit, or restart",
-    "mod-Shift-q  Quit xmonad",
+    "mod-Shift-q  Logout (kill -9 -l)",
     "mod-q        Restart xmonad",
     "mod-[1..9]   Switch to workSpace N",
     "",
@@ -501,4 +514,14 @@ help = unlines ["Welcome to electr0n's xmonad setup. Default modifier'super'. De
     "-- Mouse bindings: default actions bound to mouse events",
     "mod-button1  Set the window to floating mode and move by dragging",
     "mod-button2  Raise the window to the top of the stack",
-    "mod-button3  Set the window to floating mode and resize by dragging"]
+    "mod-button3  Set the window to floating mode and resize by dragging",
+    "",
+    "-- Toggle Layouts",
+    "mod-alt-f   Toggle NBFULL",
+    "mod-alt-n   Toggle NOBORDERS",
+    "",
+    "-- ScratchPads ",
+    "ALT + T   Launch myTerminal",
+    "ALT + M   Launch ncmpcpp via myTerminal",
+    "ALT + B   Launch bpytop via myTerminal",
+    "ALT + F   Launch ranger via myTerminal "]
