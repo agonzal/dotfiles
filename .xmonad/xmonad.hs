@@ -8,35 +8,38 @@
 --              agonzal @ github / dotfiles.git 
 
 import XMonad
-import Data.Monoid                   ()
-import Data.List                     ( isSuffixOf, sortBy )
-import Data.Function                 ( on )
-import System.Exit                   ()
+import Data.Monoid                    ()
+import Data.List                      ( isSuffixOf, sortBy )
+import Data.Function                  ( on )
+import System.Exit                    ()
 import System.IO
-import Data.Maybe                    ( maybeToList )
-import Control.Monad                 ( join, when, forM_ )
-import qualified DBus as D
-import qualified DBus.Client as D
+import Data.Maybe                     ( maybeToList )
+import Control.Monad                  ( join, when, forM_ )
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
-import qualified Codec.Binary.UTF8.String as UTF8
 
+-- Polybar Integration Imports 
+
+import qualified Codec.Binary.UTF8.String    as UTF8
+import qualified DBus                        as D
+import qualified DBus.Client                 as D
 -- XMonad Utils
-import XMonad.Util.WorkspaceCompare 
-import XMonad.Util.SpawnOnce          ( spawnOnce )
-import XMonad.Util.Run                ( safeSpawn, spawnPipe, runInTerm )
-import XMonad.Util.NamedScratchpad    ( NamedScratchpad(NS), namedScratchpadManageHook, namedScratchpadAction, customFloating, namedScratchpadFilterOutWorkspace )
+import XMonad.Util.WorkspaceCompare    ( getSortByIndex ) 
+import XMonad.Util.SpawnOnce           ( spawnOnce )
+import XMonad.Util.Run                 ( safeSpawn, spawnPipe, runInTerm )
+import XMonad.Util.NamedScratchpad     ( NamedScratchpad(NS), namedScratchpadManageHook, namedScratchpadAction, customFloating, namedScratchpadFilterOutWorkspace )
 
 -- XMonad Graphics 
 import Graphics.X11.ExtraTypes.XF86 
     ( xF86XK_Mail, xF86XK_WWW, xF86XK_Search, xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext )
 
 -- XMonad Hooks 
+import XMonad.Hooks.FadeInactive       ( fadeInactiveLogHook )
 import XMonad.Hooks.ManageDocks
     ( ToggleStruts(..), avoidStruts, docks, manageDocks, Direction2D(D, L, R, U) )
 import XMonad.Hooks.SetWMName
-import XMonad.Hooks.DynamicLog        ( dynamicLogWithPP, wrap, PP(..) ) 
-import XMonad.Hooks.ManageHelpers     ( doFullFloat, isFullscreen, doCenterFloat, isDialog )
+import XMonad.Hooks.DynamicLog        -- ( dynamicLogWithPP, wrap, PP(..), shorten ) 
+import XMonad.Hooks.ManageHelpers      ( doFullFloat, isFullscreen, doCenterFloat, isDialog )
 import XMonad.Hooks.Minimize
 
 
@@ -48,6 +51,7 @@ import XMonad.Actions.SpawnOn          ( spawnOn, manageSpawn )
 import XMonad.Actions.CycleWS          ( nextWS, prevWS, shiftToPrev, shiftToNext )
 import XMonad.Util.NamedWindows        ( getName, NamedWindow )
 import XMonad.Actions.UpdatePointer    ( updatePointer )
+import XMonad.Actions.WithAll          ( killAll )
 -- XMonad Layout Imports
 
 import XMonad.Layout.Fullscreen
@@ -103,16 +107,16 @@ myTabConfig = def { activeColor = "#b6bdca"
 
 -- myWorkspaces = ["\61704", "\63288", "\xe62b", "\61752", "\61911", "\xfad9", "\xf200", "\64123", "\64109"]
 
--- myScratchpads
+-- myScratchpads 
 myScratchPads = 
      [ NS "terminal" (myTerminal ++ " --class scratchpad") (resource =? "scratchpad") myPosition
      , NS "music" (myTerminal ++ " --class music -e ncmpcpp") (resource =? "music") myPosition
-     , NS "bpytop"  (myTerminal ++ " --class bpytop -e bpytop") (resource =? "bpytop") myPosition
+     , NS "glance"  (myTerminal ++ " --class glance -e glances") (resource =? "glance") myPosition
      , NS "ranger" (myTerminal ++ " --class ranger -e ranger") (className  =? "ranger") myPosition 
  ] where myPosition = customFloating $ W.RationalRect (1/3) (1/3) (1/3) (1/3)
 
 myNormalBorderColor  = "#d19a66"
-myFocusedBorderColor = "#98c375"
+myFocusedBorderColor = "#abb2bf"
 
 addNETSupported :: Atom -> X ()
 addNETSupported x   = withDisplay $ \dpy -> do
@@ -179,7 +183,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- ScratchPads mod1mask = ALT key. 
     , ((mod1Mask,              xK_m                         ), namedScratchpadAction myScratchPads "music")
     , ((mod1Mask,              xK_t                         ), namedScratchpadAction myScratchPads "terminal")
-    , ((mod1Mask,              xK_b                         ), namedScratchpadAction myScratchPads "bpytop")
+    , ((mod1Mask,              xK_g                         ), namedScratchpadAction myScratchPads "glance")
     , ((mod1Mask,              xK_f                         ), namedScratchpadAction myScratchPads "ranger")
 
     -- Screenshot 
@@ -197,8 +201,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,                  xK_z                         ), spawn "exec ~/bin/inhibit_activate")
     , ((modm .|. shiftMask,    xK_z                         ), spawn "exec ~/bin/inhibit_deactivate")
 
-    -- close focused window
+    -- close focused window / kill all ws windows 
     , ((modm,                  xK_x                         ), kill)
+    , ((modm .|. mod1Mask,     xK_x                         ), killAll)
 
     --Toggle Gaps.  
     , ((modm .|. controlMask,  xK_g                         ), sendMessage $ ToggleGaps)               -- toggle all gaps
@@ -206,16 +211,16 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     
     , ((modm .|. controlMask,  xK_t                         ), sendMessage $ IncGap 10 L)              -- increment the left-hand gap
-    , ((modm .|. shiftMask,    xK_t                         ), sendMessage $ DecGap 10 L)           -- decrement the left-hand gap
+    , ((modm .|. shiftMask,    xK_t                         ), sendMessage $ DecGap 10 L)              -- decrement the left-hand gap
     
     , ((modm .|. controlMask,  xK_y                         ), sendMessage $ IncGap 10 U)              -- increment the top gap
-    , ((modm .|. shiftMask,    xK_y                         ), sendMessage $ DecGap 10 U)           -- decrement the top gap
+    , ((modm .|. shiftMask,    xK_y                         ), sendMessage $ DecGap 10 U)              -- decrement the top gap
     
     , ((modm .|. controlMask,  xK_u                         ), sendMessage $ IncGap 10 D)              -- increment the bottom gap
-    , ((modm .|. shiftMask,    xK_u                         ), sendMessage $ DecGap 10 D)           -- decrement the bottom gap
+    , ((modm .|. shiftMask,    xK_u                         ), sendMessage $ DecGap 10 D)              -- decrement the bottom gap
 
     , ((modm .|. controlMask,  xK_i                         ), sendMessage $ IncGap 10 R)              -- increment the right-hand gap
-    , ((modm .|. shiftMask,    xK_i                         ), sendMessage $ DecGap 10 R)           -- decrement the right-hand gap
+    , ((modm .|. shiftMask,    xK_i                         ), sendMessage $ DecGap 10 R)              -- decrement the right-hand gap
 
      -- Cycle through layout algorithms. 
     , ((modm,                  xK_space                     ), sendMessage NextLayout)
@@ -298,7 +303,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
 
-------------------------------------------------------------------------
+------------------------------------------------------------------------ 
 -- Mouse bindings: default actions bound to mouse events
 --
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
@@ -380,9 +385,9 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScr
 --
 -- Defines a custom handler function for X Events. The function should
 -- return (All True) if the default handler is to be run afterwards. To
--- combine event hooks use mappend or mconcat from Data.Monoid.
+-- hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = mempty 
+myEventHook = ewmhDesktopsEventHook 
 
 
 ------------------------------------------------------------------------
@@ -391,15 +396,36 @@ myEventHook = mempty
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
+mkDbusClient :: IO D.Client
+mkDbusClient = do
+  dbus <- D.connectSession
+  D.requestName dbus (D.busName_ "org.xmonad.log") opts
+  return dbus
+ where
+  opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
-myLogHook :: X ()
-myLogHook =
-  let noScratchpad ws = if ws == "NSP" then "" else ws
+-- Emit a DBus signal on log updates
+dbusOutput :: D.Client -> String -> IO ()
+dbusOutput dbus str =
+  let opath  = D.objectPath_ "/org/xmonad/Log"
+      iname  = D.interfaceName_ "org.xmonad.Log"
+      mname  = D.memberName_ "Update"
+      signal = D.signal opath iname mname
+      body   = [D.toVariant $ UTF8.decodeString str]
+  in  D.emit dbus $ signal { D.signalBody = body }
 
-  in  do
-        updatePointer (0.5, 0.5) (0, 0)
-------------------------------------------------------------------------
--- Startup hook
+
+myLogHook = fadeInactiveLogHook 0.75
+
+--myLogHook :: X ()
+--myLogHook =
+--
+--  let noScratchpad ws = if ws == "NSP" then "" else ws
+--
+--  in  do
+--        updatePointer (0.5, 0.5) (0, 0)
+--------------------------------------------------------------------------
+---- Startup hook
 
 -- Perform an arbitrary action each time xmonad starts or is restarted
 -- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
@@ -424,15 +450,16 @@ myStartupHook = do
 -- Run xmonad with the settings you specify. No need to modify this.
 
 main :: IO ()
-main = do 
-    dbus <- D.connectSession
+main = mkDbusClient>>= main' 
+  --  dbus <- D.connectSession
     -- Request access to the DBus name
-    D.requestName dbus (D.busName_ "org.xmonad.Log")
-       [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-
+  --  D.requestName dbus (D.busName_ "org.xmonad.Log")
+   --    [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+main' :: D.Client -> IO ()
+main' dbus = xmonad $ docks $ ewmh defaults 
 
 --    forM_ [".xmonad-workspace-log", ".xmonad-title-log"] $ \file -> safeSpawn "mkfifo" ["/tmp/" ++ file]
-    xmonad $ docks $ ewmh defaults
+    -- xmonad $ docks $ ewmh defaults
 
 defaults = def {
 

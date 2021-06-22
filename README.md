@@ -1,25 +1,40 @@
    * [Introduction](#introduction)
+   * [Software](#Software)
    * [TMUX](#tmux)
       * [Plugins](#plugins)
       * [Keybindings](#keybindings)
    * [ZSH](#zsh)
    
 ```
-████████▄   ▄██████▄      ███        ▄████████  ▄█   ▄█          ▄████████    ▄████████ 
-███   ▀███ ███    ███ ▀█████████▄   ███    ███ ███  ███         ███    ███   ███    ███ 
-███    ███ ███    ███    ▀███▀▀██   ███    █▀  ███▌ ███         ███    █▀    ███    █▀  
-███    ███ ███    ███     ███   ▀  ▄███▄▄▄     ███▌ ███        ▄███▄▄▄       ███        
-███    ███ ███    ███     ███     ▀▀███▀▀▀     ███▌ ███       ▀▀███▀▀▀     ▀███████████ 
-███    ███ ███    ███     ███       ███        ███  ███         ███    █▄           ███ 
-███   ▄███ ███    ███     ███       ███        ███  ███▌    ▄   ███    ███    ▄█    ███ 
-████████▀   ▀██████▀     ▄████▀     ███        █▀   █████▄▄██   ██████████  ▄████████▀  
-                                                    ▀                                   
+             ______   _______ _______ _______ ___ ___     _______ _______ 
+           |   _  \ |   _   |       |   _   |   |   |   |   _   |   _   |
+           |.  |   \|.  |   |.|   | |.  1___|.  |.  |   |.  1___|   1___|
+           |.  |    |.  |   `-|.  |-|.  __) |.  |.  |___|.  __)_|____   |
+           |:  1    |:  1   | |:  | |:  |   |:  |:  1   |:  1   |:  1   |
+           |::.. . /|::.. . | |::.| |::.|   |::.|::.. . |::.. . |::.. . |
+           `------' `-------' `---' `---'   `---`-------`-------`-------'
+
 ```
 ## Introduction 
 
-In this repository you will find my various dotfiles for your consumption. These days I find myself using various virtualization deployments that I needed to standarize my environment and make it reproduable with as little a headache as possible. I recently moved my workflow to only using a Tiling window manager such as Xmonad and bspWM with keybindings for launching and app navigation and I really dig the no titlebars look, it makes for a much cleaner experience. I am also a firm believer that your desktop should be personal and customized experience and I tend to invest some time into doing just that. The main branch will house the configs of the supporting cast of applications i use almost daily. My configs change to coincide with my current colorscheme and theme so this repo will be broken down with each unique setup having its own branch. As of now, that only consists of Xmonad and Bspwm setup.  I do not plan on evaluating any other Tiling window managers as I have these to a point that works beautifully for me and my workflow. Hopefully I have documented them enough for you to be able to clone the setup or utilize different aspects of each one. 
+In this repository you will find my various dotfiles for your consumption. These days I find myself using various virtualization deployments that I needed to standarize my environment and make it reproduable with as little a headache as possible.(read: minimal effort). I recently moved my workflow to only using a Tiling window manager such as Xmonad and bspWM with keybindings to complete most tasks including app launching/navigation. I am believe that your desktop should be personal and a customized experience and I tend to invest some time into doing just that. As I stated I moved away from a traditional Desktop environment to a TWM (Tiling Window Manager). I have complete configurations for XMonad and BSPWM. 
+
+Regardless of which tiling window manager I am using I try to mimic the environments as close as possible. You can find the configuration for BSPWM in .config/bspwm and XMONAD in .xmonad
 
 
+## Software 
+
+I have a lot of software that is "themable" which allows me to have a cohesive colorscheme system wide with the main apps I use. If I have forgotten to include to the config for an application listed here, please do not hesitate to contact me or setup an issue. 
+
+| Usage           | Application               |
+|-----------------|---------------------------|
+| PDF/Read        | Zathura (OneDark)         |
+| Kb/Notes        | Obsidian (OneDark)        |
+| Editor          | Neovim / Neovide (GUI)    |
+| Shell           | ZSH w/ spaceship prompt   |
+| Termminal       | kitty (onedark colors)    |
+| Files           | ranger / thunar (onedark) |
+| 
 
 ## TMUX 
 
@@ -34,7 +49,7 @@ tmux-plugins::
     <li> tmux-yank</li>
     <li> tmux-open</li>
 </ul>
-Other: 
+other:: 
 <ul>
 <li>laktak/extrakto (requires fzf)</li>
 <li>thewtex/tmux-mem-cpu-load</li></ul>
@@ -45,24 +60,25 @@ I also use vim-tmux-pilot by sourcing pilot.tmux from my tmux config. This is in
 ### Keybindings
 
 | Keys                           | Command          |
-|--------------------------------|------------------|
-| <kbd>Ctrl</kbd>+<kbd>A</kbd>   | send-prefox      |
-| <kbd>Ctrl</kbd>+<kbd>Y</kbd>	 | sync panes 		|
-| <kbd>x</kbd>			  		 | kill-pane 		|
-| <kbd>X</kbd>			 		 | kill-window 		|
-| <kbd>_</kbd>			  		 | split-window -v	|
-| <kbd> \| </kbd>		 		 | splint-window -h |
-| <kbd>z</kbd> 		 			 | resize-pane -Z   |
-| <kbd>-</kbd> 		 			 | resize-pane -D 20 |
-| <kbd>+</kbd> 		 			 | resize-pane -U 20 |
-|  "<"                       	 | resize-pane -L 20 | 
-|  <kbd> > </kbd> 		 		 | resize-pane -R 20 |
-   
+|--------------------------------|-------------------|
+| <kbd>Ctrl</kbd>+<kbd>A</kbd>   | send-prefox       |
+| <kbd>Ctrl</kbd>+<kbd>Y</kbd>	 | sync panes 	  	 |
+| <kbd>x</kbd>			  		       | kill-pane 		     |
+| <kbd>X</kbd>			 		         | kill-window 	   	 |
+| <kbd>_</kbd>			  		       | split-window -v 	 |
+| <kbd> \| </kbd>		 		         | splint-window -h  |
+| <kbd>z</kbd> 		 			         | resize-pane -Z    |
+| <kbd>-</kbd> 		 		        	 | resize-pane -D 20 |
+| <kbd>+</kbd> 		 		        	 | resize-pane -U 20 |
+| <kbd>  "<" </kbd>           	 | resize-pane -L 20 | 
+| <kbd> ">" </kbd> 		 		       | resize-pane -R 20 |
+|---------------------------------|------------------|
 
 
 ## ZSH 
 
-I run zsh shell managed by oh-my-zsh for added functions via plugins. In all honesty I probably won't be running it much longer as the spaceship prompt is no longer depemdent on oh-my-zsh for functionality. The biggest culprit for my nerely 1 second start-up time was nvm and condainit. I have moved nvm to a lazy load and plan on doing the same for conda environments moving forward. the rc is fairly straight forward, custom functions for extracting archives and editing various confs, those are as follows:
+I run zsh shell managed by oh-my-zsh for added functions via plugins. In all honesty I probably won't be running it much longer as the spaceship prompt is no longer depemdent on oh-my-zsh or node. The project made it a native zsh prompt via prompt -s. The biggest culprit for my nerely 2.2 second start-up time was nvm and conda init.
+There is no need to try and load nvm, doctl, kubectl and the like at startup. Much more efficient to wrap these commands in a function that checks if you called the command and then provides 
 
 conf function
 
@@ -73,27 +89,27 @@ conf() {
 		bspwm)		nvim ~/.config/bspwm/bspwmrc ;;
 		sxhkd)		nvim ~/.config/sxhkd/sxhkdrc ;;
 		polybar)	nvim ~/.config/polybar/config.ini ;;
-		mpd)		nvim ~/.mpd/mpd.conf ;;
-		mutt)		nvim ~/.muttrc ;;
+		mpd)	  	nvim ~/.mpd/mpd.conf ;;
+		mutt)	  	nvim ~/.muttrc ;;
 		ncmpcpp)	nvim ~/.ncmpcpp/config ;;
 		pacman)		svim /etc/pacman.conf ;;
 		ranger)		nvim ~/.config/ranger/rc.conf ;;
 		rifle)		nvim ~/.config/ranger/rifle.conf ;;
-		tmux)		nvim ~/.tmux.conf ;;
-		nvim)		nvim ~/.vimrc ;;
+		tmux)	  	nvim ~/.tmux.conf ;;
+		nvim)	  	nvim ~/.vimrc ;;
 		xinit)		nvim ~/.xinitrc ;;
 		xresources)	nvim ~/.Xresources && xrdb merge ~/.Xresources ;;
 		zathura)	nvim ~/.config/zathura/zathurarc ;;
 		theme2)		nvim ~/.config/gtk-2.0/gtkrc ;;
 		theme3)		nvim ~/.config/gtk-3.0/gtk.css ;;
-		gtk2)		nvim ~/.gtkrc-2.0 ;;
-		gtk3)		nvim ~/.config/gtk-3.0/settings.ini ;;
+		gtk2)		  nvim ~/.gtkrc-2.0 ;;
+		gtk3)		  nvim ~/.config/gtk-3.0/settings.ini ;;
 		tint2)		nvim ~/.config/tint2/tint2rc ;;
-		zsh)		nvim ~/.zshrc && source ~/.zshrc ;;
+		zsh)		  nvim ~/.zshrc && source ~/.zshrc ;;
 		hosts)		sudoedit /etc/hosts ;;
 		vhosts)		sudoedit /etc/httpd/conf/extra/httpd-vhosts.conf ;;
 		httpd)		sudoedit /etc/httpd/conf/httpd.conf ;;
-		*)			echo "Unknown application: $1" ;;
+		*)			  echo "Unknown application: $1" ;;
 	esac
 }
 ```
