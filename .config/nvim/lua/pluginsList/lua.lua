@@ -42,9 +42,9 @@ return require("packer").startup(
         use "karb94/neoscroll.nvim"
         use "tomasiser/vim-code-dark"
         use 'maksimr/vim-jsbeautify'
-        use 'preservim/nerdtree'
         use 'roy2220/easyjump.tmux'
         use 'tpope/vim-repeat'
+        use "sheerun/vim-polyglot"
         use 'folke/lsp-colors.nvim'
         use 'liuchengxu/vista.vim'
         use {

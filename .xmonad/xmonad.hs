@@ -7,16 +7,18 @@
 --    `--- ---'`--- ---`-------`--- ---`--- ---`------'  
 --              agonzal @ github / dotfiles.git 
 
+ {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances #-}
+
 import XMonad
-import Data.Monoid                    ()
-import Data.List                      ( isSuffixOf, sortBy )
-import Data.Function                  ( on )
-import System.Exit                    ()
+import Data.Monoid                     ()
+import Data.List                       ( isSuffixOf, sortBy )
+import Data.Function                   ( on )
+import System.Exit                     ()
 import System.IO
-import Data.Maybe                     ( maybeToList )
-import Control.Monad                  ( join, when, forM_ )
-import qualified XMonad.StackSet as W
-import qualified Data.Map        as M
+import Data.Maybe                      ( maybeToList )
+import Control.Monad                   ( join, when, forM_ )
+import qualified XMonad.StackSet             as W
+import qualified Data.Map                    as M
 
 -- Polybar Integration Imports 
 
@@ -24,7 +26,8 @@ import qualified Codec.Binary.UTF8.String    as UTF8
 import qualified DBus                        as D
 import qualified DBus.Client                 as D
 -- XMonad Utils
-import XMonad.Util.WorkspaceCompare    ( getSortByIndex ) 
+import XMonad.Util.Types 
+import XMonad.Util.WorkspaceCompare    ( getSortByIndex, getSortByTag ) 
 import XMonad.Util.SpawnOnce           ( spawnOnce )
 import XMonad.Util.Run                 ( safeSpawn, spawnPipe, runInTerm )
 import XMonad.Util.NamedScratchpad     ( NamedScratchpad(NS), namedScratchpadManageHook, namedScratchpadAction, customFloating, namedScratchpadFilterOutWorkspace )
@@ -42,9 +45,9 @@ import XMonad.Hooks.DynamicLog        -- ( dynamicLogWithPP, wrap, PP(..), short
 import XMonad.Hooks.ManageHelpers      ( doFullFloat, isFullscreen, doCenterFloat, isDialog )
 import XMonad.Hooks.Minimize
 
-
 -- FancyBorders (double borders)
 import FancyBorders
+-- import SideDecoration
 
 -- XMonad Actions
 import XMonad.Actions.SpawnOn          ( spawnOn, manageSpawn ) 
@@ -52,6 +55,9 @@ import XMonad.Actions.CycleWS          ( nextWS, prevWS, shiftToPrev, shiftToNex
 import XMonad.Util.NamedWindows        ( getName, NamedWindow )
 import XMonad.Actions.UpdatePointer    ( updatePointer )
 import XMonad.Actions.WithAll          ( killAll )
+import XMonad.Actions.FloatKeys 
+import XMonad.Actions.FloatSnap
+import XMonad.Actions.Minimize
 -- XMonad Layout Imports
 
 import XMonad.Layout.Fullscreen
@@ -59,10 +65,13 @@ import XMonad.Layout.Fullscreen
 import XMonad.Hooks.EwmhDesktops       ( ewmh, ewmhDesktopsEventHook, ewmhDesktopsLogHook, ewmhDesktopsStartup, ewmhDesktopsEventHookCustom )
 import XMonad.Layout.NoBorders
 import XMonad.Layout.ThreeColumns 
-import XMonad.Layout.Minimize 
+import XMonad.Layout.Minimize
+import XMonad.Layout.Maximize
+import XMonad.Layout.ResizableTile     ( ResizableTall )
 import XMonad.Layout.Spacing           ( spacingRaw, Border(Border) )
 import XMonad.Layout.SimpleFloat       ( simpleFloat )
 import XMonad.Layout.MultiToggle
+import XMonad.Layout.Decoration
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Tabbed 
 import XMonad.Layout.Gaps
@@ -93,30 +102,92 @@ myWorkspaces    = ["\63083", "\xf268", "\xe7c5", "\xfad9", "\xf292", "\xf200", "
 
 
 -- OneDark colorscheme 
-myTabConfig = def { activeColor = "#b6bdca"
-                  , inactiveColor = "#c8ccd4"
+myTabConfig = def { activeColor = "#1e222a"
+                  , inactiveColor = "#51afef"
                   , urgentColor = "#abb2bf"
-                  , activeBorderColor = "#e5c07b"
-                  , inactiveBorderColor = "#d19a66"
-                  , urgentBorderColor = "#51afef"
-                  , activeTextColor = "#c8ccd4"
+                  , activeBorderColor = "#1e222a"
+                  , inactiveBorderColor = "#51afef"
+                  , urgentBorderColor = "#e06c75"
+                  , activeTextColor = "#abb2bf"
                   , inactiveTextColor = "#98c379"
                   , urgentTextColor = "#e06c75"
-                  , fontName = "xft:JetBrainsMono Nerd Font:size=10:antialias=true"}
+                  , fontName = "xft:JetBrainsMono Nerd Font:size=10:antialias=true"
+                  , decoHeight = 15}
+
+standardTheme = def
+    { activeColor = "#b6bdca"
+    , activeBorderColor = "#e5c07b"
+    , activeTextColor = "#c8ccd4"
+    , inactiveBorderColor = "#d19a66"
+    , inactiveColor = "#c8ccd4"
+    , inactiveTextColor = "#98c379"
+    , urgentBorderColor = "#51afef"
+    , urgentColor = "#e06c75"
+    , urgentTextColor = "#e5c07b"
+    , decoWidth = 4 
+    , decoHeight = 2 }
 
 
--- myWorkspaces = ["\61704", "\63288", "\xe62b", "\61752", "\61911", "\xfad9", "\xf200", "\64123", "\64109"]
+data SideDecoration a = SideDecoration Direction2D deriving (Show, Read)
+
+instance Eq a => DecorationStyle SideDecoration a where
+
+    shrink b (Rectangle _ _ dw dh) (Rectangle x y w h)
+      | SideDecoration U <- b = Rectangle x (y + fi dh) w (h - dh)
+      | SideDecoration R <- b = Rectangle x y (w - dw) h
+      | SideDecoration D <- b = Rectangle x y w (h - dh)
+      | SideDecoration L <- b = Rectangle (x + fi dw) y (w - dw) h
+
+    pureDecoration b dw dh _ st _ (win, Rectangle x y w h)
+      | win `elem` W.integrate st && dw < w && dh < h = Just $ case b of
+        SideDecoration U -> Rectangle x y w dh
+        SideDecoration R -> Rectangle (x + fi (w - dw)) y dw h
+        SideDecoration D -> Rectangle x (y + fi (h - dh)) w dh
+        SideDecoration L -> Rectangle x y dw h
+      | otherwise = Nothing
 
 -- myScratchpads 
 myScratchPads = 
      [ NS "terminal" (myTerminal ++ " --class scratchpad") (resource =? "scratchpad") myPosition
      , NS "music" (myTerminal ++ " --class music -e ncmpcpp") (resource =? "music") myPosition
      , NS "glance"  (myTerminal ++ " --class glance -e glances") (resource =? "glance") myPosition
-     , NS "ranger" (myTerminal ++ " --class ranger -e ranger") (className  =? "ranger") myPosition 
+     , NS "ranger" (myTerminal ++ " --class ranger -e ranger") (className  =? "ranger") myPosition
+     , NS "thunar" "thunar" (className =? "thunar") myPosition
  ] where myPosition = customFloating $ W.RationalRect (1/3) (1/3) (1/3) (1/3)
 
-myNormalBorderColor  = "#d19a66"
-myFocusedBorderColor = "#abb2bf"
+
+centreRect = W.RationalRect 0.25 0.25 0.5 0.5
+
+-- If the window is floating then (f), if tiled then (n)
+floatOrNot f n = withFocused $ \windowId -> do
+    floats <- gets (W.floating . windowset)
+    if windowId `M.member` floats -- if the current window is floating...
+       then f
+       else n
+
+-- Centre and float a window (retain size)
+centreFloat win = do
+    (_, W.RationalRect x y w h) <- floatLocation win
+    windows $ W.float win (W.RationalRect ((1 - w) / 2) ((1 - h) / 2) w h)
+    return ()
+
+-- Float a window in the centre
+centreFloat' w = windows $ W.float w centreRect
+
+-- Make a window my 'standard size' (half of the screen) keeping the centre of the window fixed
+standardSize win = do
+    (_, W.RationalRect x y w h) <- floatLocation win
+    windows $ W.float win (W.RationalRect x y 0.5 0.5)
+    return ()
+
+
+-- Float and centre a tiled window, sink a floating window
+toggleFloat = floatOrNot (withFocused $ windows . W.sink) (withFocused centreFloat')
+
+
+myNormalBorderColor  = "#abb2bf"
+myFocusedBorderColor = "#565c64"
+myActiveBorderColor  = "#c8ccd4"
 
 addNETSupported :: Atom -> X ()
 addNETSupported x   = withDisplay $ \dpy -> do
@@ -150,6 +221,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     
     , ((modm .|. mod1Mask,     xK_f                         ), sendMessage $ Toggle NBFULL)
     , ((modm .|. mod1Mask,     xK_n                         ), sendMessage $ Toggle NOBORDERS)
+    
+    -- toggleFloats 
+    , ((modm,                  xK_f                         ), withFocused centreFloat)
+--  , ((modm .|. shiftMask,    xK_F2                        ), withFocused toggleFloat)
+
 
     -- lock screen ALT + L
     , ((mod1Mask,              xK_l                         ), spawn "~/bin/betterlockscreen -l blur") 
@@ -180,22 +256,28 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0,                     xF86XK_MonBrightnessUp       ), spawn "brightnessctl s +10%")
     , ((0,                     xF86XK_MonBrightnessDown     ), spawn "brightnessctl s 10-%")
     
-    -- ScratchPads mod1mask = ALT key. 
+    -- ScratchPads ALT key. 
     , ((mod1Mask,              xK_m                         ), namedScratchpadAction myScratchPads "music")
     , ((mod1Mask,              xK_t                         ), namedScratchpadAction myScratchPads "terminal")
     , ((mod1Mask,              xK_g                         ), namedScratchpadAction myScratchPads "glance")
-    , ((mod1Mask,              xK_f                         ), namedScratchpadAction myScratchPads "ranger")
+    , ((mod1Mask,              xK_f                         ), namedScratchpadAction myScratchPads "thunar")
+    , ((modm .|. controlMask,  xK_f                         ), namedScratchpadAction myScratchPads "ranger")
 
     -- Screenshot 
     , ((0,                     xK_Print                     ), spawn "exec ~/bin/rofi-screenshot")
     , ((modm,                  xK_Print                     ), spawn "exec ~/bin/screenrec.sh")
     , ((modm .|. controlMask,  xK_Print                     ), spawn "pkill ffmpeg")
-    --, ((modm,      xK_v                      ), spawn "exec ~/bin/visualizer")
+
+    -- Visualizer 
+    , ((modm,                  xK_v                         ), spawn "exec ~/bin/visualizer")
   
     -- Bitwarden 
     , ((modm .|. shiftMask,    xK_b                         ), spawn "bitwarden-desktop") 
 
     -- Minimize stuff
+    --, ((modm .|. mod1Mask,     xK_m                         ), withFocused minimizeWindow)
+    --, ((modm .|. shiftMask,    xK_m                         ), sendMessage RestoreNextMinimizedWin)
+
 
    -- Enable/disable xautolock 
     , ((modm,                  xK_z                         ), spawn "exec ~/bin/inhibit_activate")
@@ -207,7 +289,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     --Toggle Gaps.  
     , ((modm .|. controlMask,  xK_g                         ), sendMessage $ ToggleGaps)               -- toggle all gaps
-    , ((modm .|. shiftMask,    xK_g                         ), sendMessage $ setGaps [(L,10), (R,10), (U,10), (D,35)]) -- reset the GapSpec
+    , ((modm .|. shiftMask,    xK_g                         ), sendMessage $ setGaps [(L,10), (R,10), (U,10), (D,50)]) -- reset the GapSpec
 
     
     , ((modm .|. controlMask,  xK_t                         ), sendMessage $ IncGap 10 L)              -- increment the left-hand gap
@@ -322,28 +404,31 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
-myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ avoidStruts ( defaultFancyBorders simpleFloat ||| tabs ||| defaultFancyBorders tiled ||| defaultFancyBorders (Mirror tiled) ||| centered) -- ThreeColMid 1 (3/100) (1/2))
+
+myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ minimize $ maximize $ defaultFancyBorders (avoidStruts ( centered ||| tiled ||| (Mirror tiled ||| tabs))) 
 
 
 -- avoidStruts( defaultFancyBorders tiled ||| defaultFancyBorders simpleFloat ||| tabs)
   where
      -- default tiling algorithm partitions the screen into two panes
-     tiled   = Tall nmaster delta ratio
-
+     tiled     = Tall nmaster delta ratio 
+               
      -- The default number of windows in the master pane
-     nmaster = 1 
+     nmaster   = 1 
 
      -- Default proportion of screen occupied by master pane
-     ratio   = 1/2
+     ratio     = 2/3
 
      -- Percent of screen to increment by when resizing panes
-     delta   = 3/100
+     delta     = 1/100
 
-     tabs    = tabbed shrinkText myTabConfig
+     tabs      = tabbedBottom shrinkText myTabConfig
 
-     centered = ThreeColMid 1 (3/100) (1/2) 
+     centered  = ThreeColMid 1 (3/100) (1/2) 
 
-    -- centerMaster = centerMaster (tiled ||| Tall)
+    -- sidedecor = decoration shrinkText standardTheme (SideDecoration R)
+
+
 
 myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads <+> composeAll
     [ className =? "zoom" --> doFloat
@@ -353,7 +438,6 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScr
     , className =? "Picture-in-Picture" --> doFloat
     , className =? "Blueman-manager" --> doCenterFloat  
     , className =? "Pavucontrol" --> doCenterFloat
-    , title =? "Panel Preferences" --> doCenterFloat
     , className =? "Thunar" --> doFloat
     , className =? "calibre" --> doFloat
     , className =? "Bitwarden" --> doFloat 
@@ -361,7 +445,7 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScr
     , className =? "Evolution-alarm-notify" --> doFloat 
     , className =? "Evolution" --> doFloat
     , className =? "calibre" --> doShift ( myWorkspaces !! 3 )
-    , className =? "firefox" --> doShift ( myWorkspaces !! 1)
+    , className =? "Google-chrome" --> doShift ( myWorkspaces !! 1)
     , className =? "deluge" --> doShift ( myWorkspaces !! 3 )
     , className =? "lightcord" --> doShift ( myWorkspaces !! 4 )
     , className =? "zoom" --> doShift ( myWorkspaces !! 7 )
@@ -374,7 +458,6 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScr
     , resource  =? "kdesktop" --> doIgnore
     , isFullscreen --> doFullFloat
     , isDialog --> doCenterFloat
-    , resource =? "bpytop" --> doCenterFloat
     , resource =? "music" --> doCenterFloat
                                  ]    -- !!!! THESE ALL SHIFT +1 SO 6 GOES TO 7. 
 
@@ -434,16 +517,17 @@ myLogHook = fadeInactiveLogHook 0.75
 -- By default, do nothing.
 myStartupHook = do
   spawn "exec ~/bin/lock.sh"
-  -- spawnOnce "blueman-applet &"
-  -- spawnOnce "nm-applet &"
-  -- spawnOnce "greenclip daemon"
-  -- spawnOnce "picom -fb"
-  -- spawnOnce "dunst"
-  -- spawnOnce "xsetroot -cursor_name left_ptr"
-  -- spawnOnce "setxkbmap -option ctrl:nocaps "
-  -- spawnOnce "xcape -e 'Control_L=Escape'"
-  -- spawnOnce "xcape -e 'Super_L=Super_L|o'"
-  spawnOnce "exec ~/.xmonad/autostart.sh" 
+  spawnOnce "blueman-applet &"
+  spawnOnce "nm-applet &"
+  spawnOnce "greenclip daemon"
+  spawnOnce "picom -fb"
+  spawnOnce "mpd"
+  spawnOnce "dunst"
+  spawnOnce "xsetroot -cursor_name left_ptr"
+  spawnOnce "setxkbmap -option ctrl:nocaps "
+  spawnOnce "xcape -e 'Control_L=Escape'"
+  spawnOnce "xcape -e 'Super_L=Super_L|o'"
+  spawn "exec ~/.config/polybar/xmonad-launch.sh"
   setWMName "LG3D"
  -- ewmhDesktopsStartup
 
@@ -479,9 +563,9 @@ defaults = def {
 
       -- hooks, layouts
         manageHook = myManageHook, 
-        layoutHook = gaps [(L,10), (R,10), (U,10), (D,35)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
-        handleEventHook    = myEventHook,
-        logHook            = myLogHook, 
+        layoutHook = gaps [(L,10), (R,10), (U,10), (D,50)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
+        handleEventHook    = myEventHook <+> minimizeEventHook <+> fullscreenEventHook,
+        logHook            = myLogHook,
         startupHook        = myStartupHook >> addEWMHFullscreen}
 
 -- | Finally, a copy of the default bindings in simple textual tabular format.

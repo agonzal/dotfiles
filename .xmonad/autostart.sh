@@ -13,20 +13,21 @@ xrandr --output DP1 --off --output DP2 --off --output DP3 --mode 2880x1620 --pos
 numlockx on &
 run blueman-applet &
 run picom -fb &
+run volumeicon 
 
 # caps as esc or control when used with another key. 
 run setxkbmap -option ctrl:nocaps 
 run xcape -e 'Control_L=Escape'
-run  xcape -e "Super_L=Super_L|o"
+run xcape -e "Super_L=Super_L|o"
 
 run /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-run volumeicon &
 #run pa-applet &
 # nitrogen --restore &
-feh --bg-scale ~/Pictures/wallpapers/OneDark/brain-overflow-onedark.jpg &
+feh --bg-scale ~/wallpapers/brain-overflow-onedark.jpg &
 run greenclip daemon &
 run dunst &
-$HOME/.config/polybar/xmonad-launch.sh &
+run polybar.sh xmonad &
+
 
 #kitty --class dropdown &
 #thunar &
