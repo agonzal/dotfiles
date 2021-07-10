@@ -1,0 +1,103 @@
+# OneDark base16 
+#   _______  _______ ___ ___ _______ _______ _______    
+#   |   _   \|   _   |   Y   |       |   _   |   _   |   
+#   |.  1   /|.  1   |   1   |.|   | |.  |   |.  1   |   
+#   |.  _   \|.  ____|\_   _/`-|.  |-|.  |   |.  ____|   
+#   |:  1    |:  |     |:  |   |:  | |:  1   |:  |       
+#   |::.. .  |::.|     |::.|   |::.| |::.. . |::.|       
+#   `-------'`---'     `---'   `---' `-------`---'       
+#########################################################
+# custom onedark colorscheme, primarily focused on #d19a66 
+# to match the dominiant decondary color of my current background. 
+
+# Main background, empty for terminal default, need to be empty if you want transparent background
+theme[main_bg]="#1e222a"
+
+# Main text color
+theme[main_fg]="#c8ccd4"
+
+# Title color for boxes
+theme[title]="#d19a66"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#ecd6c1"
+
+# Background color of selected item in processes box
+theme[selected_bg]="#545862"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="#b6bdca"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#353b45"
+
+# Color of text appearing on top of graphs, i.e uptime and current network graph scaling
+theme[graph_text]="#c8ccd4"
+
+# Background color of the percentage meters
+theme[meter_bg]="#3e4451"
+
+# Misc colors for processes box including mini cpu graphs, details memory graph and details status text
+theme[proc_misc]="#61afef"
+
+# Cpu box outline color
+theme[cpu_box]="#d19a66"
+
+# Memory/disks box outline color
+theme[mem_box]="#d19a66"
+
+# Net up/down box outline color
+theme[net_box]="#d19a66"
+
+# Processes box outline color
+theme[proc_box]="#d19a66"
+
+# Box divider line and small boxes line color
+theme[div_line]="#d19a66"
+
+# Temperature graph colors
+theme[temp_start]="#61afef"
+theme[temp_mid]="#4d8cbf"
+theme[temp_end]="#90c7f3"
+
+# CPU graph colors
+theme[cpu_start]="#d19a66"
+theme[cpu_mid]="#e3c2a3"
+theme[cpu_end]="#e5c07b"
+
+# Mem/Disk free meter
+
+theme[free_start]="#d5e7c9"
+theme[free_mid]="#accf93"
+theme[free_end]="#98c379"
+# Mem/Disk cached meter
+theme[cached_start]="#3e4451"
+theme[cached_mid]="#545852"
+theme[cached_end]="#565c64"
+
+# Mem/Disk available meter
+theme[available_start]="#61afef"
+theme[available_mid]="#a0cff5"
+theme[available_end]="#90c7f3"
+
+# Mem/Disk used meter
+theme[used_end]="#e06c75"
+theme[used_mid]="#e68990"
+theme[used_start]="#eca6ac"
+
+# Download graph colors
+theme[download_start]="#A0CFF5"
+theme[download_mid]="#80bff2"
+theme[download_end]="#61afef"
+
+# Upload graph colors
+theme[upload_start]="#e06c75"
+theme[upload_mid]="#e68990"
+theme[upload_end]="#eca6ac"
+
+# Process box color gradient for threads, mem and cpu usage
+
+theme[process_start]="#d5e7c9"
+theme[process_mid]="#accf93"
+theme[process_end]="#98c379"
+

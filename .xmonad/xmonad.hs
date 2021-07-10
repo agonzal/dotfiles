@@ -6,8 +6,20 @@
 --   (::. |:.  |::.|:. |::.. . |::.|   |::.|:. |::.. . / 
 --    `--- ---'`--- ---`-------`--- ---`--- ---`------'  
 --              agonzal @ github / dotfiles.git 
+--
+--   
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
 
- {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances #-}
+
 
 import XMonad
 import Data.Monoid                     ()
@@ -34,7 +46,7 @@ import XMonad.Util.NamedScratchpad     ( NamedScratchpad(NS), namedScratchpadMan
 
 -- XMonad Graphics 
 import Graphics.X11.ExtraTypes.XF86 
-    ( xF86XK_Mail, xF86XK_WWW, xF86XK_Search, xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext )
+    ( xF86XK_Mail, xF86XK_WWW, xF86XK_Search, xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext, xF86XK_Calculator, xF86XK_MyComputer )
 
 -- XMonad Hooks 
 import XMonad.Hooks.FadeInactive       ( fadeInactiveLogHook )
@@ -47,7 +59,7 @@ import XMonad.Hooks.Minimize
 
 -- FancyBorders (double borders)
 import FancyBorders
--- import SideDecoration
+--import SideDecoration
 
 -- XMonad Actions
 import XMonad.Actions.SpawnOn          ( spawnOn, manageSpawn ) 
@@ -58,16 +70,17 @@ import XMonad.Actions.WithAll          ( killAll )
 import XMonad.Actions.FloatKeys 
 import XMonad.Actions.FloatSnap
 import XMonad.Actions.Minimize
--- XMonad Layout Imports
+import qualified XMonad.Actions.FlexibleResize as Flex 
 
+-- XMonad Layout Imports
 import XMonad.Layout.Fullscreen
     ( fullscreenEventHook, fullscreenManageHook, fullscreenSupport, fullscreenFull )
 import XMonad.Hooks.EwmhDesktops       ( ewmh, ewmhDesktopsEventHook, ewmhDesktopsLogHook, ewmhDesktopsStartup, ewmhDesktopsEventHookCustom )
 import XMonad.Layout.NoBorders
 import XMonad.Layout.ThreeColumns 
-import XMonad.Layout.Minimize
-import XMonad.Layout.Maximize
-import XMonad.Layout.ResizableTile     ( ResizableTall )
+import XMonad.Layout.Minimize          
+import XMonad.Layout.Maximize          
+import XMonad.Layout.ResizableTile     (ResizableTall (..))
 import XMonad.Layout.Spacing           ( spacingRaw, Border(Border) )
 import XMonad.Layout.SimpleFloat       ( simpleFloat )
 import XMonad.Layout.MultiToggle
@@ -83,7 +96,10 @@ import XMonad.Layout.Gaps
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal      = "kitty"
+myTerminal           = "kitty"
+myNormalBorderColor  = "#abb2bf"
+myFocusedBorderColor = "#565c64"
+myActiveBorderColor  = "#c8ccd4"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -103,23 +119,25 @@ myWorkspaces    = ["\63083", "\xf268", "\xe7c5", "\xfad9", "\xf292", "\xf200", "
 
 -- OneDark colorscheme 
 myTabConfig = def { activeColor = "#1e222a"
-                  , inactiveColor = "#51afef"
-                  , urgentColor = "#abb2bf"
+                  , inactiveColor = "#565a64"
+                  , urgentColor = "#e06c75"
                   , activeBorderColor = "#1e222a"
-                  , inactiveBorderColor = "#51afef"
+                  , inactiveBorderColor = "#565a64"
                   , urgentBorderColor = "#e06c75"
                   , activeTextColor = "#abb2bf"
-                  , inactiveTextColor = "#98c379"
-                  , urgentTextColor = "#e06c75"
+                  , inactiveTextColor = "#c8ccd4"
+                  , urgentTextColor = "#e5c07b"
                   , fontName = "xft:JetBrainsMono Nerd Font:size=10:antialias=true"
                   , decoHeight = 15}
+
+-- standardTheme used with SideDecoration module. 
 
 standardTheme = def
     { activeColor = "#b6bdca"
     , activeBorderColor = "#e5c07b"
     , activeTextColor = "#c8ccd4"
     , inactiveBorderColor = "#d19a66"
-    , inactiveColor = "#c8ccd4"
+    , inactiveColor = "#565c64"
     , inactiveTextColor = "#98c379"
     , urgentBorderColor = "#51afef"
     , urgentColor = "#e06c75"
@@ -128,66 +146,40 @@ standardTheme = def
     , decoHeight = 2 }
 
 
-data SideDecoration a = SideDecoration Direction2D deriving (Show, Read)
-
-instance Eq a => DecorationStyle SideDecoration a where
-
-    shrink b (Rectangle _ _ dw dh) (Rectangle x y w h)
-      | SideDecoration U <- b = Rectangle x (y + fi dh) w (h - dh)
-      | SideDecoration R <- b = Rectangle x y (w - dw) h
-      | SideDecoration D <- b = Rectangle x y w (h - dh)
-      | SideDecoration L <- b = Rectangle (x + fi dw) y (w - dw) h
-
-    pureDecoration b dw dh _ st _ (win, Rectangle x y w h)
-      | win `elem` W.integrate st && dw < w && dh < h = Just $ case b of
-        SideDecoration U -> Rectangle x y w dh
-        SideDecoration R -> Rectangle (x + fi (w - dw)) y dw h
-        SideDecoration D -> Rectangle x (y + fi (h - dh)) w dh
-        SideDecoration L -> Rectangle x y dw h
-      | otherwise = Nothing
-
 -- myScratchpads 
 myScratchPads = 
      [ NS "terminal" (myTerminal ++ " --class scratchpad") (resource =? "scratchpad") myPosition
      , NS "music" (myTerminal ++ " --class music -e ncmpcpp") (resource =? "music") myPosition
      , NS "glance"  (myTerminal ++ " --class glance -e glances") (resource =? "glance") myPosition
      , NS "ranger" (myTerminal ++ " --class ranger -e ranger") (className  =? "ranger") myPosition
-     , NS "thunar" "thunar" (className =? "thunar") myPosition
- ] where myPosition = customFloating $ W.RationalRect (1/3) (1/3) (1/3) (1/3)
+ ] where myPosition = customFloating $ W.RationalRect (1/3) (1/3) (1/2) (1/2)
 
 
-centreRect = W.RationalRect 0.25 0.25 0.5 0.5
+-----------------------------------------
+-- Floating functions
+-----------------------------------------
+centerRect = W.RationalRect 0.25 0.25 0.5 0.5
 
--- If the window is floating then (f), if tiled then (n)
-floatOrNot f n = withFocused $ \windowId -> do
-    floats <- gets (W.floating . windowset)
-    if windowId `M.member` floats -- if the current window is floating...
-       then f
-       else n
-
--- Centre and float a window (retain size)
-centreFloat win = do
+-- Center and float a window (retain size of tile)
+centerFloat win = do
     (_, W.RationalRect x y w h) <- floatLocation win
     windows $ W.float win (W.RationalRect ((1 - w) / 2) ((1 - h) / 2) w h)
     return ()
 
--- Float a window in the centre
-centreFloat' w = windows $ W.float w centreRect
+-- Float a window in the center (1/4 of the screen)
+centerFloat' w = windows $ W.float w centerRect
 
--- Make a window my 'standard size' (half of the screen) keeping the centre of the window fixed
-standardSize win = do
+-- Make a window my 'standard size' (half of the screen) keeping the center of the window fixed
+customFloat win = do
     (_, W.RationalRect x y w h) <- floatLocation win
-    windows $ W.float win (W.RationalRect x y 0.5 0.5)
+    windows $ W.float win (W.RationalRect 0.5 0.5 0.5 0.5)
     return ()
 
 
 -- Float and centre a tiled window, sink a floating window
-toggleFloat = floatOrNot (withFocused $ windows . W.sink) (withFocused centreFloat')
-
-
-myNormalBorderColor  = "#abb2bf"
-myFocusedBorderColor = "#565c64"
-myActiveBorderColor  = "#c8ccd4"
+toggleFloat w = windows (\s -> if M.member w (W.floating s)
+                            then W.sink w s
+                            else (W.float w (W.RationalRect (1/3) (2/4) (1/2) (2/5)) s))
 
 addNETSupported :: Atom -> X ()
 addNETSupported x   = withDisplay $ \dpy -> do
@@ -198,7 +190,7 @@ addNETSupported x   = withDisplay $ \dpy -> do
        sup <- (join . maybeToList) <$> getWindowProperty32 dpy a_NET_SUPPORTED r
        when (fromIntegral x `notElem` sup) $
          changeProperty32 dpy r a_NET_SUPPORTED a propModeAppend [fromIntegral x]
-
+ 
 addEWMHFullscreen :: X ()
 addEWMHFullscreen   = do
     wms <- getAtom "_NET_WM_STATE"
@@ -210,36 +202,37 @@ addEWMHFullscreen   = do
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
-    -- launch a terminal
+    -- launch a terminal (kitty + xfce4 drop-dpwm)
     [ ((modm .|. shiftMask,    xK_Return                    ), spawn $ XMonad.terminal conf)
-
+    , ((modm,                  xK_F12                       ), spawn "xfce4-terminal --drop-down")
 
     , ((0,                     xF86XK_WWW                   ), spawn "google-chrome-stable")  -- laptop config 
-    , ((mod1Mask,              xK_f                         ), spawn "thunar")
+    , ((0,                     xF86XK_MyComputer            ), spawn "thunar")  -- doesm't work ?
     , ((modm,                  xK_c                         ), spawn "calibre") 
-    , ((0,                     xF86XK_Mail                  ), spawn "evolution")
+    , ((0,                     xF86XK_Mail                  ), spawn "kitty --class mail -e neomutt")
     
     , ((modm .|. mod1Mask,     xK_f                         ), sendMessage $ Toggle NBFULL)
     , ((modm .|. mod1Mask,     xK_n                         ), sendMessage $ Toggle NOBORDERS)
     
-    -- toggleFloats 
-    , ((modm,                  xK_f                         ), withFocused centreFloat)
---  , ((modm .|. shiftMask,    xK_F2                        ), withFocused toggleFloat)
-
+    -- toggleFloats (Super / super+alt / supert+shift / super+ctrl )
+    , ((modm,                  xK_f                         ), withFocused toggleFloat)
+    , ((modm .|. mod1Mask,     xK_c                         ), withFocused centerFloat)
+    , ((modm .|. shiftMask,    xK_c                         ), withFocused centerFloat')
+    , ((modm .|. controlMask,  xK_f                         ), withFocused customFloat)
 
     -- lock screen ALT + L
     , ((mod1Mask,              xK_l                         ), spawn "~/bin/betterlockscreen -l blur") 
 
     -- Chrome luaunch via Search key.   
-    , ((0,                     xF86XK_Search                ), spawn "google-chrome-stable")  -- for myy goldtouch keyboard
+    , ((0,                     xF86XK_Search                ), spawn "thunar")  -- Since xmonad won't map HOME media key
 
     -- Launch rofi enabled scripts 
-    , ((modm,                  xK_o                         ), spawn "~/bin/launcher.sh")     -- rofi + windowcd / file / ssh / clipboard 
+    , ((modm,                  xK_o                         ), spawn "~/bin/launcher.sh")     -- rofi + windowcd / file / clipboard 
     , ((modm,                  xK_p                         ), spawn "bwmenu")                -- bitwarden rofi passwd management           
     , ((modm,                  xK_d                         ), spawn "exec ~/bin/dofi")       -- todofi (task management) 
 
-    -- Launch chats (slack / lightcord / telegram-desktop)
-    , ((modm,                  xK_s                         ), spawn "slack")
+    -- Chats: Super + Alt 
+    , ((modm .|. mod1Mask,     xK_s                         ), spawn "slack")
     , ((modm .|. mod1Mask,     xK_d                         ), spawn "lightcord")
     , ((modm .|. mod1Mask,     xK_t                         ), spawn "telegram-desktop")
 
@@ -260,8 +253,21 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((mod1Mask,              xK_m                         ), namedScratchpadAction myScratchPads "music")
     , ((mod1Mask,              xK_t                         ), namedScratchpadAction myScratchPads "terminal")
     , ((mod1Mask,              xK_g                         ), namedScratchpadAction myScratchPads "glance")
-    , ((mod1Mask,              xK_f                         ), namedScratchpadAction myScratchPads "thunar")
-    , ((modm .|. controlMask,  xK_f                         ), namedScratchpadAction myScratchPads "ranger")
+    , ((mod1Mask,              xK_r                         ), namedScratchpadAction myScratchPads "ranger")
+
+    -- Floating windows maagement (shift + direction)
+    , ((shiftMask,             xK_Left                      ), withFocused (keysMoveWindow (-10, 0  )))
+    , ((shiftMask,             xK_Up                        ), withFocused (keysMoveWindow (0  , -10)))
+    , ((shiftMask,             xK_Down                      ), withFocused (keysMoveWindow (0  , 10 )))
+    , ((shiftMask,             xK_Right                     ), withFocused (keysMoveWindow (10 , 0  )))
+    
+    -- Floating windows Resizing (control + alt)
+    , ((controlMask .|. mod1Mask,  xK_Left                  ), withFocused (keysResizeWindow    (-10,   0) (0, 0)))
+    , ((controlMask .|. mod1Mask,  xK_Up                    ), withFocused (keysResizeWindow    (0  , -10) (0, 0)))
+    , ((controlMask .|. mod1Mask,  xK_Down                  ), withFocused (keysResizeWindow    (0  ,  10) (0, 0)))   
+    , ((controlMask .|. mod1Mask,  xK_Right                 ), withFocused (keysResizeWindow    (10 ,   0) (0, 0)))
+    , ((controlMask .|. mod1Mask,  xK_Page_Down             ), withFocused (keysAbsResizeWindow (10 ,  10) (0, 0)))  
+    , ((controlMask .|. mod1Mask,  xK_Page_Up               ), withFocused (keysAbsResizeWindow (-10, -10) (0, 0)))               
 
     -- Screenshot 
     , ((0,                     xK_Print                     ), spawn "exec ~/bin/rofi-screenshot")
@@ -274,14 +280,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Bitwarden 
     , ((modm .|. shiftMask,    xK_b                         ), spawn "bitwarden-desktop") 
 
-    -- Minimize stuff
-    --, ((modm .|. mod1Mask,     xK_m                         ), withFocused minimizeWindow)
-    --, ((modm .|. shiftMask,    xK_m                         ), sendMessage RestoreNextMinimizedWin)
-
+    -- Minimize window ( super + alt )
+    , ((modm .|. mod1Mask,     xK_m                         ), withFocused minimizeWindow)
 
    -- Enable/disable xautolock 
-    , ((modm,                  xK_z                         ), spawn "exec ~/bin/inhibit_activate")
-    , ((modm .|. shiftMask,    xK_z                         ), spawn "exec ~/bin/inhibit_deactivate")
+    , ((modm,                  xK_z                         ), spawn "exec ~/bin/disable_xautolock")
+    , ((modm .|. shiftMask,    xK_z                         ), spawn "exec ~/bin/enable_xautolock")
 
     -- close focused window / kill all ws windows 
     , ((modm,                  xK_x                         ), kill)
@@ -357,17 +361,17 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,                  xK_b                         ), sendMessage ToggleStruts)
 
     -- Quit xmonad
-    , ((modm .|. shiftMask,    xK_q                         ), spawn "logout")
+    , ((modm .|. shiftMask,    xK_q                         ), spawn "logout")   -- kill -9 -1 
 
     -- Restart xmonad
     , ((modm,                  xK_q                         ), spawn "xmonad --recompile ; xmonad --restart")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask,    xK_slash                     ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+    
     ]
     ++
-
-    --
+    
     -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
     --
@@ -398,20 +402,20 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
 
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
+    , ((modm, button3), (\w -> focus w >> Flex.mouseResizeWindow w
                                        >> windows W.shiftMaster))
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
+                
 
-
-myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ minimize $ maximize $ defaultFancyBorders (avoidStruts ( centered ||| tiled ||| (Mirror tiled ||| tabs))) 
+myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ minimize $ defaultFancyBorders (avoidStruts ( centered ||| tiled ||| (Mirror tiled ||| tabs))) 
 
 
 -- avoidStruts( defaultFancyBorders tiled ||| defaultFancyBorders simpleFloat ||| tabs)
   where
      -- default tiling algorithm partitions the screen into two panes
-     tiled     = Tall nmaster delta ratio 
+     tiled     = ResizableTall nmaster delta ratio [] 
                
      -- The default number of windows in the master pane
      nmaster   = 1 
@@ -433,7 +437,7 @@ myLayout = mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ minimize $ maximize $ default
 myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads <+> composeAll
     [ className =? "zoom" --> doFloat
     , className =? "dunst"  --> doFloat 
-    , className =? "gimp-2.10" --> doFloat
+    , className =? "Gimp-2.10" --> doFloat
     , className =? "Spotify" --> doFloat
     , className =? "Picture-in-Picture" --> doFloat
     , className =? "Blueman-manager" --> doCenterFloat  
@@ -442,24 +446,22 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScr
     , className =? "calibre" --> doFloat
     , className =? "Bitwarden" --> doFloat 
     , className =? "MEGAsync" --> doFloat 
-    , className =? "Evolution-alarm-notify" --> doFloat 
-    , className =? "Evolution" --> doFloat
+    , className =? "Pavucontrol" --> doCenterFloat 
+    , className =? "kitty" --> doCenterFloat  
+    , className =? "Xfce4-terminal" --> doFloat  
     , className =? "calibre" --> doShift ( myWorkspaces !! 3 )
     , className =? "Google-chrome" --> doShift ( myWorkspaces !! 1)
     , className =? "deluge" --> doShift ( myWorkspaces !! 3 )
     , className =? "lightcord" --> doShift ( myWorkspaces !! 4 )
-    , className =? "zoom" --> doShift ( myWorkspaces !! 7 )
     , className =? "Virt-manager" --> doCenterFloat 
     , className =? "Virt-manager" --> doShift ( myWorkspaces !! 7 )
-    , className =? "Anaconda-Navigator" --> doFloat
-    , className =? "Anaconda-Navigator" --> doShift ( myWorkspaces !! 6 )
     , className =? "Vlc" --> doFloat 
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop" --> doIgnore
     , isFullscreen --> doFullFloat
     , isDialog --> doCenterFloat
     , resource =? "music" --> doCenterFloat
-                                 ]    -- !!!! THESE ALL SHIFT +1 SO 6 GOES TO 7. 
+                                 ]    
 
 ------------------------------------------------------------------------
 -- Event handling
@@ -517,19 +519,22 @@ myLogHook = fadeInactiveLogHook 0.75
 -- By default, do nothing.
 myStartupHook = do
   spawn "exec ~/bin/lock.sh"
-  spawnOnce "blueman-applet &"
-  spawnOnce "nm-applet &"
-  spawnOnce "greenclip daemon"
+  spawn "exec ~/bin/layout.sh"
+  spawn "execc ~/.config/polybar/xmonad-launch.sh"
+  spawn "blueman-applet"
+  spawn "nitrogen --restore"
+  spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1i &"
+  spawnOnce "nm-applet"
+  spawnOnce "volumeicon"
+  spawn "greenclip daemon"
   spawnOnce "picom -fb"
-  spawnOnce "mpd"
+  spawn "mpd ~/.mpd/mpd.conf"
   spawnOnce "dunst"
   spawnOnce "xsetroot -cursor_name left_ptr"
   spawnOnce "setxkbmap -option ctrl:nocaps "
   spawnOnce "xcape -e 'Control_L=Escape'"
   spawnOnce "xcape -e 'Super_L=Super_L|o'"
-  spawn "exec ~/.config/polybar/xmonad-launch.sh"
   setWMName "LG3D"
- -- ewmhDesktopsStartup
 
 -- Run xmonad with the settings you specify. No need to modify this.
 
@@ -564,7 +569,7 @@ defaults = def {
       -- hooks, layouts
         manageHook = myManageHook, 
         layoutHook = gaps [(L,10), (R,10), (U,10), (D,50)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
-        handleEventHook    = myEventHook <+> minimizeEventHook <+> fullscreenEventHook,
+         handleEventHook    = myEventHook <+> minimizeEventHook <+> fullscreenEventHook,
         logHook            = myLogHook,
         startupHook        = myStartupHook >> addEWMHFullscreen}
 
