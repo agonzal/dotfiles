@@ -46,7 +46,7 @@ import XMonad.Util.NamedScratchpad     ( NamedScratchpad(NS), namedScratchpadMan
 
 -- XMonad Graphics 
 import Graphics.X11.ExtraTypes.XF86 
-    ( xF86XK_Mail, xF86XK_WWW, xF86XK_Search, xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext, xF86XK_Calculator, xF86XK_MyComputer )
+    ( xF86XK_Mail, xF86XK_WWW, xF86XK_Search, xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext, xF86XK_Calculator, xF86XK_MyComputer,  xF86XK_HomePage  )
 
 -- XMonad Hooks 
 import XMonad.Hooks.FadeInactive       ( fadeInactiveLogHook )
@@ -59,7 +59,6 @@ import XMonad.Hooks.Minimize
 
 -- FancyBorders (double borders)
 import FancyBorders
---import SideDecoration
 
 -- XMonad Actions
 import XMonad.Actions.SpawnOn          ( spawnOn, manageSpawn ) 
@@ -80,10 +79,10 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.ThreeColumns 
 import XMonad.Layout.Minimize          
 import XMonad.Layout.Maximize          
-import XMonad.Layout.ResizableTile     (ResizableTall (..))
+import XMonad.Layout.ResizableTile     (ResizableTall (..), MirrorResize(..)) 
 import XMonad.Layout.Spacing           ( spacingRaw, Border(Border) )
 import XMonad.Layout.SimpleFloat       ( simpleFloat )
-import XMonad.Layout.MultiToggle
+import XMonad.Layout.MultiToggle       
 import XMonad.Layout.Decoration
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Tabbed 
@@ -114,7 +113,7 @@ myBorderWidth   = 2
 myModMask       = mod4Mask
   
 -- myWorkspaces    = ["\63083", "\63288", "\63306", "\61723", "\63107", "\63601", "\63391", "\61713", "\61884"]
-myWorkspaces    = ["\63083", "\xf268", "\xe7c5", "\xfad9", "\xf292", "\xf200", "\xe235", "\xfa6f", "\xf49c"]
+myWorkspaces    = ["\xf120", "\xf268", "\xe7c5", "\xfad9", "\xf292", "\xf200", "\xe235", "\xfa6f", "\xf49c"]
 
 
 -- OneDark colorscheme 
@@ -169,14 +168,14 @@ centerFloat win = do
 -- Float a window in the center (1/4 of the screen)
 centerFloat' w = windows $ W.float w centerRect
 
--- Make a window my 'standard size' (half of the screen) keeping the center of the window fixed
+-- Make a window my default size (half of the screen) keeping the center of the window fixed
 customFloat win = do
     (_, W.RationalRect x y w h) <- floatLocation win
     windows $ W.float win (W.RationalRect 0.5 0.5 0.5 0.5)
     return ()
 
 
--- Float and centre a tiled window, sink a floating window
+-- Float and place bottom right a tiled window, sink a floating window
 toggleFloat w = windows (\s -> if M.member w (W.floating s)
                             then W.sink w s
                             else (W.float w (W.RationalRect (1/3) (2/4) (1/2) (2/5)) s))
@@ -202,44 +201,52 @@ addEWMHFullscreen   = do
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
-    -- launch a terminal (kitty + xfce4 drop-dpwm)
-    [ ((modm .|. shiftMask,    xK_Return                    ), spawn $ XMonad.terminal conf)
-    , ((modm,                  xK_F12                       ), spawn "xfce4-terminal --drop-down")
+    -- launch a terminal
+    [ ((shiftMask,             xK_Return                    ), spawn $ XMonad.terminal conf)
+    , ((modm .|. mod1Mask,     xK_Return                    ), spawn "/usr/local/bin/st")
 
+    -- Dropdowns 
+    , ((modm,                  xK_F2                        ), spawn "tdrop --wm xmonad -w 30% -h 70% thunar")
+    , ((modm,                  xK_F3                        ), spawn "tdrop --wm xmonad -w 29% -h 70% -x 70% st -c dropdown -e bpytop")
+    , ((modm,                  xK_F4                        ), spawn "tdrop --wm xmonad -h 40% -w 60% -x 20% kitty --class scratchterm")
+    , ((modm,                  xK_F5                        ), spawn "tdrop --wm xmonad -w 30% -h 70% -y 20% kitty --class ranger -e ranger")
+
+
+    -- Media function keys (No Modifier) 
     , ((0,                     xF86XK_WWW                   ), spawn "google-chrome-stable")  -- laptop config 
     , ((0,                     xF86XK_MyComputer            ), spawn "thunar")  -- doesm't work ?
-    , ((modm,                  xK_c                         ), spawn "calibre") 
     , ((0,                     xF86XK_Mail                  ), spawn "kitty --class mail -e neomutt")
+    , ((0,                     xF86XK_HomePage              ), spawn "google-chrome-stable")
+    , ((0,                     xF86XK_Search                ), spawn "thunar")
     
+
+    -- Toggle Layouts NBFULL / NOBORDERS layouts. 
     , ((modm .|. mod1Mask,     xK_f                         ), sendMessage $ Toggle NBFULL)
     , ((modm .|. mod1Mask,     xK_n                         ), sendMessage $ Toggle NOBORDERS)
     
     -- toggleFloats (Super / super+alt / supert+shift / super+ctrl )
     , ((modm,                  xK_f                         ), withFocused toggleFloat)
-    , ((modm .|. mod1Mask,     xK_c                         ), withFocused centerFloat)
-    , ((modm .|. shiftMask,    xK_c                         ), withFocused centerFloat')
-    , ((modm .|. controlMask,  xK_f                         ), withFocused customFloat)
-
-    -- lock screen ALT + L
-    , ((mod1Mask,              xK_l                         ), spawn "~/bin/betterlockscreen -l blur") 
-
-    -- Chrome luaunch via Search key.   
-    , ((0,                     xF86XK_Search                ), spawn "thunar")  -- Since xmonad won't map HOME media key
-
+    , ((modm .|. shiftMask,    xK_f                         ), withFocused customFloat)
+    , ((modm,                  xK_c                         ), withFocused centerFloat)  
+    , ((modm .|. shiftMask,    xK_c                         ), withFocused centerFloat') 
+    
+    -- lock screen CTRL + ALT + L
+    , ((modm .|. mod1Mask,     xK_l                         ), spawn "betterlockscreen -l blur") 
+ 
     -- Launch rofi enabled scripts 
     , ((modm,                  xK_o                         ), spawn "~/bin/launcher.sh")     -- rofi + windowcd / file / clipboard 
     , ((modm,                  xK_p                         ), spawn "bwmenu")                -- bitwarden rofi passwd management           
-    , ((modm,                  xK_d                         ), spawn "exec ~/bin/dofi")       -- todofi (task management) 
+    , ((modm,                  xK_d                         ), spawn "exec ~/bin/dofi")       -- todo.sh + rofi 
 
     -- Chats: Super + Alt 
     , ((modm .|. mod1Mask,     xK_s                         ), spawn "slack")
     , ((modm .|. mod1Mask,     xK_d                         ), spawn "lightcord")
     , ((modm .|. mod1Mask,     xK_t                         ), spawn "telegram-desktop")
 
-    -- Audio keys
-    , ((0,                     xF86XK_AudioPlay             ), spawn "playerctl play-pause")
-    , ((0,                     xF86XK_AudioPrev             ), spawn "playerctl previous")
-    , ((0,                     xF86XK_AudioNext             ), spawn "playerctl next")
+    -- Audio keys (No Modifier)
+    , ((0,                     xF86XK_AudioPlay             ), spawn "mpc toggle")
+    , ((0,                     xF86XK_AudioPrev             ), spawn "mpc prev")
+    , ((0,                     xF86XK_AudioNext             ), spawn "mpc next")
     
     , ((0,                     xF86XK_AudioRaiseVolume      ), spawn "amixer sset Master 5%+")
     , ((0,                     xF86XK_AudioLowerVolume      ), spawn "amixer sset Master 5%-")
@@ -249,10 +256,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0,                     xF86XK_MonBrightnessUp       ), spawn "brightnessctl s +10%")
     , ((0,                     xF86XK_MonBrightnessDown     ), spawn "brightnessctl s 10-%")
     
-    -- ScratchPads ALT key. 
+    -- ScratchPads (Modifier: ALT key)
     , ((mod1Mask,              xK_m                         ), namedScratchpadAction myScratchPads "music")
     , ((mod1Mask,              xK_t                         ), namedScratchpadAction myScratchPads "terminal")
-    , ((mod1Mask,              xK_g                         ), namedScratchpadAction myScratchPads "glance")
     , ((mod1Mask,              xK_r                         ), namedScratchpadAction myScratchPads "ranger")
 
     -- Floating windows maagement (shift + direction)
@@ -269,6 +275,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((controlMask .|. mod1Mask,  xK_Page_Down             ), withFocused (keysAbsResizeWindow (10 ,  10) (0, 0)))  
     , ((controlMask .|. mod1Mask,  xK_Page_Up               ), withFocused (keysAbsResizeWindow (-10, -10) (0, 0)))               
 
+    -- For ResizableTall layout modifier. 
+    , ((modm,                  xK_Down                      ), sendMessage MirrorShrink)
+    , ((modm,                  xK_Up                        ), sendMessage MirrorExpand)
+
     -- Screenshot 
     , ((0,                     xK_Print                     ), spawn "exec ~/bin/rofi-screenshot")
     , ((modm,                  xK_Print                     ), spawn "exec ~/bin/screenrec.sh")
@@ -281,11 +291,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask,    xK_b                         ), spawn "bitwarden-desktop") 
 
     -- Minimize window ( super + alt )
-    , ((modm .|. mod1Mask,     xK_m                         ), withFocused minimizeWindow)
+    , ((modm .|. mod1Mask,     xK_m                         ), withFocused minimizeWindow) -- polywins handles maximize for my setup. 
 
    -- Enable/disable xautolock 
-    , ((modm,                  xK_z                         ), spawn "exec ~/bin/disable_xautolock")
-    , ((modm .|. shiftMask,    xK_z                         ), spawn "exec ~/bin/enable_xautolock")
+    , ((modm,                  xK_z                         ), spawn "pkill xautolock")
+    , ((modm .|. shiftMask,    xK_z                         ), spawn "exec ~/bin/autolock.sh")
 
     -- close focused window / kill all ws windows 
     , ((modm,                  xK_x                         ), kill)
@@ -438,17 +448,17 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScr
     [ className =? "zoom" --> doFloat
     , className =? "dunst"  --> doFloat 
     , className =? "Gimp-2.10" --> doFloat
-    , className =? "Spotify" --> doFloat
+    , className =? "St" --> doCenterFloat
+    , className =? "dropdown" --> doFloat 
     , className =? "Picture-in-Picture" --> doFloat
     , className =? "Blueman-manager" --> doCenterFloat  
     , className =? "Pavucontrol" --> doCenterFloat
     , className =? "Thunar" --> doFloat
     , className =? "calibre" --> doFloat
     , className =? "Bitwarden" --> doFloat 
-    , className =? "MEGAsync" --> doFloat 
     , className =? "Pavucontrol" --> doCenterFloat 
     , className =? "kitty" --> doCenterFloat  
-    , className =? "Xfce4-terminal" --> doFloat  
+    , className =? "scratchterm" --> doFloat 
     , className =? "calibre" --> doShift ( myWorkspaces !! 3 )
     , className =? "Google-chrome" --> doShift ( myWorkspaces !! 1)
     , className =? "deluge" --> doShift ( myWorkspaces !! 3 )
@@ -518,17 +528,17 @@ myLogHook = fadeInactiveLogHook 0.75
 --
 -- By default, do nothing.
 myStartupHook = do
-  spawn "exec ~/bin/lock.sh"
-  spawn "exec ~/bin/layout.sh"
-  spawn "execc ~/.config/polybar/xmonad-launch.sh"
-  spawn "blueman-applet"
-  spawn "nitrogen --restore"
-  spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1i &"
+  spawnOnce "exec ~/bin/autolock.sh"
+  spawnOnce "exec ~/bin/layout.sh"
+  spawnOnce "exec ~/.config/polybar/xmonad-launch.sh"
+  spawnOnce "blueman-applet"
+  spawnOnce "nitrogen --restore"
+  spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
   spawnOnce "nm-applet"
   spawnOnce "volumeicon"
-  spawn "greenclip daemon"
+  spawnOnce "greenclip daemon"
   spawnOnce "picom -fb"
-  spawn "mpd ~/.mpd/mpd.conf"
+  spawnOnce "mpd ~/.mpd/mpd.conf"
   spawnOnce "dunst"
   spawnOnce "xsetroot -cursor_name left_ptr"
   spawnOnce "setxkbmap -option ctrl:nocaps "

@@ -17,23 +17,23 @@
 ```
 ## Introduction 
 
-In this repository you will find my various dotfiles for your consumption. These days I find myself using various virtualization deployments that I needed to standarize my environment and make it reproduable with as little a headache as possible.(read: minimal effort). I recently moved my workflow to only using a Tiling window manager such as Xmonad and bspWM with keybindings to complete most tasks including app launching/navigation. I am believe that your desktop should be personal and a customized experience and I tend to invest some time into doing just that. As I stated I moved away from a traditional Desktop environment to a TWM (Tiling Window Manager). I have complete configurations for XMonad and BSPWM. 
-
-Regardless of which tiling window manager I am using I try to mimic the environments as close as possible. You can find the configuration for BSPWM in .config/bspwm and XMONAD in .xmonad
+In this repository you will find my various dotfiles for your consumption. These days I find myself using various virtualization deployments that I needed to standarize my environment and make it easy to reproduce with as little a headache as possible.(read: minimal effort). I recently moved my workflow to only using a Tiling window manager such as Xmonad and bspWM with keybindings to complete most tasks including app launching/navigation. I am believe that your desktop should be personal and a customized experience and I tend to invest some time into doing just that. Regardless of which tiling window manager I am using I try to mimic the environments as close as possible. You can find the configuration for BSPWM in .config/bspwm and XMONAD in .xmonad
 
 
 ## Software 
 
-I have a lot of software that is "themable" which allows me to have a cohesive colorscheme system wide with the main apps I use. If I have forgotten to include to the config for an application listed here, please do not hesitate to contact me or setup an issue. 
+I have a lot of software that is "themable" which allows me to have a cohesive colorscheme system wide with the main apps I use. If I have forgotten to include the config for an application listed here, please do not hesitate to contact me or open an issue. 
 
-| Usage           | Application               |
-|-----------------|---------------------------|
-| PDF/Read        | Zathura (OneDark)         |
-| Kb/Notes        | Obsidian (OneDark)        |
-| Editor          | Neovim / Neovide (GUI)    |
-| Shell           | ZSH w/ spaceship prompt   |
-| Termminal       | kitty (onedark colors)    |
-| Files           | ranger / thunar (onedark) |
+| Usage           | Application               | Themed  |
+|-----------------|---------------------------|---------|
+| PDF/Read        | Zathura                   | Yes     |
+| Kb/Notes        | Obsidian                  | Yes     |
+| Editor          | Neovim / Neovide          | Yes     |
+| Shell           | ZSH w/ custom prompt      |         |
+| Termminal       | kitty                     | Yes     |
+| Term Icons      | colorls gem               | Yes (custom) |
+| Files           | ranger / thunar           | Yes     |
+| Proc Mgmt       | Bpytop                    | Yes (custom) |
 | 
 
 ## TMUX 
@@ -77,12 +77,32 @@ I also use vim-tmux-pilot by sourcing pilot.tmux from my tmux config. This is in
 
 ## ZSH 
 
-I run zsh shell managed by oh-my-zsh for added functions via plugins. In all honesty I probably won't be running it much longer as the spaceship prompt is no longer depemdent on oh-my-zsh or node. The project made it a native zsh prompt via prompt -s. The biggest culprit for my nerely 2.2 second start-up time was nvm and conda init.
-There is no need to try and load nvm, doctl, kubectl and the like at startup. Much more efficient to wrap these commands in a function that checks if you called the command and then provides 
+I run zsh shell managed by oh-my-zsh for added functions via plugins. In all honesty I probably won't be running it much longer as the spaceship prompt is no longer depemdent on oh-my-zsh or node. The project made it a native zsh prompt via prompt -s. The biggest culprit for my nerely 2.2 second start-up time was nvm and conda init. There is no need to try and load nvm, doctl, kubectl and the like at startup. Much more efficient to wrap these commands in a function that checks if you called the command and then sources the completion config respectively. The "lazy-loading"has dropped my load time to 0.35s which I can live with no problem. I keep any API sensitive keys and configs in zsh.local inside of CUSTOM to not be managed by GIT and accidentally include it in a commit. I also use two custom plugins that make extensive use of fzf.  
+
+### Custom plugins 
+
+fzf.zsh 
+
+```zsh
+bindkey '^P' fzf-file-widget
+bindkey '^Y' fzf-history-widget
+bindkey '^D' fzf-cd-widget
+
+# Kill a process
+# Type pk to get a list of running processes
+# enter will kill the selected process
+pk() {
+  local pid=$(ps -ef | sed 1d | fzf-tmux -m | awk '{print $2}')
+
+  if [[ $pid ]]; then
+    kill -${1:-9} $pid
+  fi
+}
+```
 
 conf function
 
-```shell
+```zsh
 conf() {
 	case $1 in
 		xmonad)		nvim ~/.xmonad/xmonad.hs ;;
@@ -116,7 +136,7 @@ conf() {
 
 extract function
 
-```shell
+```zsh
 function extract {
  if [ -z "$1" ]; then
     # display usage if no parameters given

@@ -1,0 +1,44 @@
+# Main Colors
+unrecognized_file: cornflower
+recognized_file:   darksalmon
+dir:               palegreen 
+
+# Link
+dead_link: indianred
+link:      mediumorchid 
+
+# Special Files
+socket:    green
+blockdev:  green
+chardev:   green
+
+# Access Modes
+write:     darksalmon
+read:      cornflower
+exec:      indianred
+no_access: webgray
+
+# Age
+day_old:     cornflower
+hour_old:    burlywood
+no_modifier: indianred
+
+# File Size
+file_large:  indianred
+file_medium: palegreen
+file_small:  burlywood
+
+# Random
+report: whitesmoke
+user:   burlywood
+tree:   webgray 
+empty:  burlywood
+error:  indianred
+normal: palegreen
+
+# Git
+addition:     palegreen
+modification: burlywood 
+deletion:     indianred
+untracked:    silver
+unchanged:    snow

@@ -8,7 +8,8 @@
 #   `-------'`---'     `---'   `---' `-------`---'       
 #########################################################
 # custom onedark colorscheme, primarily focused on #d19a66 
-# to match the dominiant decondary color of my current background. 
+# to match the dominiant color of my current wallpaper 
+# astronaut-half-oned.jpg found in <repo>/wallpapers. . 
 
 # Main background, empty for terminal default, need to be empty if you want transparent background
 theme[main_bg]="#1e222a"
@@ -71,14 +72,14 @@ theme[free_start]="#d5e7c9"
 theme[free_mid]="#accf93"
 theme[free_end]="#98c379"
 # Mem/Disk cached meter
-theme[cached_start]="#3e4451"
-theme[cached_mid]="#545852"
-theme[cached_end]="#565c64"
+theme[cached_start]="#abb2bf"
+theme[cached_mid]="#b6bdca"
+theme[cached_end]="#c8ccd4"
 
 # Mem/Disk available meter
-theme[available_start]="#61afef"
-theme[available_mid]="#a0cff5"
-theme[available_end]="#90c7f3"
+theme[available_end]="#61afef"
+theme[available_start]="#a0cff5"
+theme[available_mid]="#90c7f3"
 
 # Mem/Disk used meter
 theme[used_end]="#e06c75"
@@ -86,6 +87,7 @@ theme[used_mid]="#e68990"
 theme[used_start]="#eca6ac"
 
 # Download graph colors
+
 theme[download_start]="#A0CFF5"
 theme[download_mid]="#80bff2"
 theme[download_end]="#61afef"
