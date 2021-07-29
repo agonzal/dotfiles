@@ -208,8 +208,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Dropdowns 
     , ((modm,                  xK_F2                        ), spawn "tdrop --wm xmonad -w 30% -h 70% thunar")
     , ((modm,                  xK_F3                        ), spawn "tdrop --wm xmonad -w 29% -h 70% -x 70% st -c dropdown -e bpytop")
-    , ((modm,                  xK_F4                        ), spawn "tdrop --wm xmonad -h 40% -w 60% -x 20% kitty --class scratchterm")
-    , ((modm,                  xK_F5                        ), spawn "tdrop --wm xmonad -w 30% -h 70% -y 20% kitty --class ranger -e ranger")
+    , ((modm,                  xK_F4                        ), spawn "tdrop --wm xmonad -n 1 -h 40% -w 60% -x 20% kitty --class scratchterm")
+    , ((modm,                  xK_F5                        ), spawn "tdrop --wm xmonad -n 2 -w 30% -h 70% -y 20% kitty --class ranger -e ranger")
 
 
     -- Media function keys (No Modifier) 
