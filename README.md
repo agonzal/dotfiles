@@ -42,7 +42,7 @@ Shell: zsh / nushell
 WM: XMonad 
 Taskbar: Polybar 
 
-![It's OneDark and Hell is Hot](/screenshots/itsdark.jpg)
+![It's OneDark and Hell is Hot](/screenshot/itsdark.jpg)
 
 ### Approach  
 
@@ -106,7 +106,7 @@ You can copy/paste the following code to apply my custom OneDark colorscheme to 
 
 You shall end up with something similar to: 
 
-![slack-onedark](/screenshots/slack-onedark.png)
+![slack-onedark](/screenshot/slack-onedark.png)
 
 
 #### TelegramDesktop 
@@ -114,7 +114,7 @@ You shall end up with something similar to:
 While this is very much still a BIG work in progress, I believe it is usuable to the point that others may want to implement in their environments. Again if you encounter any issues or similar please don't hesitate to open an issue or reach out. 
 
 
-![TelegramDesktop](/screenshots/telegramdesktop.png)
+![TelegramDesktop](/screenshot/telegramdesktop.png)
 
 
 Within this repo, the major sections (xmonad / bspwm / oh-my-zsh ) all will have individual readme's that desribe in better detail that resource.
@@ -124,7 +124,7 @@ Within this repo, the major sections (xmonad / bspwm / oh-my-zsh ) all will have
 
 I leveraged dark-discord.css theme to create a custom onedark style theme for Lightcord. You can find it in .config/lightcord/themes. 
 
-![lightcord](/screenshots/lightcord.png)
+![lightcord](/screenshot/lightcord.png)
 
 
 #### TMUX 
@@ -200,7 +200,7 @@ For a more in-depth breakdown please refer to the [README.md](/ohmyzsh/README.md
 I use fzf for several ops. I use its `--preview` option to get a preview for packages available and description for yay (check yi alias in ohmyzsh/custom/aliases.zsh). The same goes for `pacrm` alias which uses to preview 
 all available packages and removes a selection. The default bindings for zsh will also use fzf for history, file searches. Nvim's telescope also uses fzf. It will look like: 
 
-![fzf](/screenshots/fzf.png)
+![fzf](/screenshot/fzf.png)
 
 Please refer to the various aliases and exports within my zsh config for more details. Right now the default opts for fzf in this
 setup are:
