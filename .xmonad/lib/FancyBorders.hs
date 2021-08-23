@@ -11,7 +11,7 @@ import Graphics.X11.Xlib.Misc
 import Control.Monad (when)
 
 defaultFancyTheme :: FancyBordersTheme
-defaultFancyTheme = FancyBordersTheme "#c8ccd4" 4 
+defaultFancyTheme = FancyBordersTheme "#c8ccd4" 2 
 
 data FancyBordersTheme = FancyBordersTheme {
                         outerColor :: String,

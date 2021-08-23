@@ -25,8 +25,7 @@ oneDouble & # only after picom should we invoke.
 # caps as esc or control when used with another key. 
 setxkbmap -option ctrl:nocaps 
 xcape -e 'Control_L=Escape'
-
-xcape -e "Super_L=Super_L|space"
+xcape -e "Super_L=Super_L|space" # hitting super alone will invoke rofi via launcher.sh 
 
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 run volumeicon &
@@ -35,7 +34,7 @@ run volumeicon &
 feh --bg-scale ~/Pictures/wallpapers/OneDark/the-neon-shallows-oned.png &
 run greenclip daemon &
 run dunst &
-$HOME/.config/polybar/launch.sh &
+run $HOME/.config/polybar/launch.sh bspwm &
 
 #kitty --class dropdown &
 #thunar &

@@ -7,10 +7,11 @@ function run {
   fi
 }
 
+POLYBAR=/home/electr0n/.config/polybar/config.ini 
 
 xrandr --output DP1 --off --output DP2 --off --output DP3 --mode 2880x1620 --pos 0x0 --rotate normal --output HDMI1 --off --output HDMI2 --off --output HDMI3 --off --output VIRTUAL1 --off
 
-numlockx on &
+#numlockx on &
 run blueman-applet &
 run picom -fb &
 run volumeicon 
@@ -22,11 +23,11 @@ run xcape -e "Super_L=Super_L|o"
 
 run /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 #run pa-applet &
-# nitrogen --restore &
-feh --bg-scale ~/wallpapers/brain-overflow-onedark.jpg &
+run nitrogen --restore &
+#feh --bg-center ~/wallpapers/spaceman-oned.jpg &
 run greenclip daemon &
 run dunst &
-run polybar.sh xmonad &
+run polybar xmonad -r -c $POLYBAR &
 
 
 #kitty --class dropdown &

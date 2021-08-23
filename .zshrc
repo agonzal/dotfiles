@@ -5,31 +5,33 @@
 #   |:  1  \|:  1   |:  |   |:  |   |:  1   |
 #   |::.. . |::.. . |::.|:. |::.|:. |::.. . |
 #   `-------`-------`--- ---`--- ---`-------'
+#################################################
+##################### Albert "electr0n" Gonzalez 
 
+# ZSH options 
+
+setopt share_history 
+setopt hist_ignore_dups 
+setopt auto_cd 
+setopt nobeep 
+setopt hist_find_no_dups 
 
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/electr0n/.oh-my-zsh"
-#source $ZSH/custom/agonzal.zsh-theme
-ZSH_THEME='agonzal'
-
-### colorls gem 
-#source $(dirname $(gem which colorls))/tab_complete.sh
-
 HYPHEN_INSENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
-
-plugins=(tmux command-not-found fzf-tab zsh-autosuggestions zsh-completions zsh-syntax-highlighting history-substring-search z ripgrep fzf history zsh_reload pass systemd ssh-agent)
+ZSH_THEME=agonzal
+plugins=( httpie tmux command-not-found fzf-tab zsh-autosuggestions zsh-completions zsh-syntax-highlighting history-substring-search z ripgrep fzf history zsh_reload systemd ssh-agent)
 
 #For z
 [[ -r "/usr/share/z/z.sh" ]] && source /usr/share/z/z.sh
 
 
 source $ZSH/oh-my-zsh.sh
-#source $ZSH/custom/aliases.zsh 
-ZSH_THEME='agonzal'
 
-export PATH=$PATH:/home/electr0n/.linuxbrew/bin:~/.nvm/versions/node:/home/electr0n/scripts:/home/electr0n/bin:~/.cargo/bin:~/.local/share/gem/ruby/3.0.0/bin:/home/electr0n/.local/share/gem/ruby/3.0.0/bin:~/.config/polybar/scripts:~/tranalyzer2-0.8.9/scripts
+export QT_QPA_PLATFORMTHEME=qt5ct
+export PATH=$PATH:/home/electr0n/.local/bin:~/.nvm/versions/node:/home/electr0n/scripts:/home/electr0n/bin:~/.cargo/bin:~/.local/share/gem/ruby/3.0.0/bin:/home/electr0n/.local/share/gem/ruby/3.0.0/bin:~/.config/polybar/scripts:~/.tranalyzer2-0.8.10/scripts:~/.local/share/nvim/lspinstall/bash/node_modules/.bin
 export less=" -R "
 export LESSOPEN='| ~/bin/src-hilite-lesspipe.sh %s'
 export BAT_THEME="TwoDark"
@@ -43,15 +45,6 @@ export FZF_DEFAULT_OPTS='
   --color pointer:#adc896,info:#abb2bf,border:#565c64
   --border'
 
-## Trananalyzer
-
-export T2HOME=/home/electr0n/tranalyzer2-0.8.9
-if [ -f "$T2HOME/scripts/t2_aliases" ]; then
-    . $T2HOME/scripts/t2_aliases             # Note the leading `.'
-fi
-
-
- #eval "$(oh-my-posh --init --shell zsh --config ~/.poshthemes/spaceship.omp.json)"
 
 # Preferred editor for local and remote sessions
  if [[ -n $SSH_CONNECTION ]]; then
@@ -83,8 +76,6 @@ load_nvm () {
 for cmd in "${NODE_GLOBALS[@]}"; do
     eval "${cmd}(){ unset -f ${NODE_GLOBALS}; load_nvm; ${cmd} \$@ }"
 done
-
-
 
 
 # Check if 'kubectl' is a command in $PATH
@@ -134,208 +125,8 @@ PROMPT_EOL_MARK=''
 
 
 export TERM_PROGRAM=kitty
-export LF_ICONS="\
-tw=:\
-st=:\
-ow=:\
-dt=:\
-di=:\
-fi=:\
-*.7z=:\
-*.a=:\
-*.ai=:\
-*.apk=:\
-*.asm=:\
-*.asp=:\
-*.aup=:\
-*.avi=:\
-*.awk=:\
-*.bash=:\
-*.bat=:\
-*.bmp=:\
-*.bz2=:\
-*.c=:\
-*.c++=:\
-*.cab=:\
-*.cbr=:\
-*.cbz=:\
-*.cc=:\
-*.class=:\
-*.clj=:\
-*.cljc=:\
-*.cljs=:\
-*.cmake=:\
-*.coffee=:\
-*.conf=:\
-*.cp=:\
-*.cpio=:\
-*.cpp=:\
-*.cs=:\
-*.csh=:\
-*.css=:\
-*.cue=:\
-*.cvs=:\
-*.cxx=:\
-*.d=:\
-*.dart=:\
-*.db=:\
-*.deb=:\
-*.diff=:\
-*.dll=:\
-*.doc=:\
-*.docx=:\
-*.dump=:\
-*.edn=:\
-*.eex=:\
-*.efi=:\
-*.ejs=:\
-*.elf=:\
-*.elm=:\
-*.epub=:\
-*.erl=:\
-*.ex=:\
-*.exe=:\
-*.exs=:\
-*.f#=:\
-*.fifo=|:\
-*.fish=:\
-*.flac=:\
-*.flv=:\
-*.fs=:\
-*.fsi=:\
-*.fsscript=:\
-*.fsx=:\
-*.gem=:\
-*.gemspec=:\
-*.gif=:\
-*.go=:\
-*.gz=:\
-*.gzip=:\
-*.h=:\
-*.haml=:\
-*.hbs=:\
-*.hh=:\
-*.hpp=:\
-*.hrl=:\
-*.hs=:\
-*.htaccess=:\
-*.htm=:\
-*.html=:\
-*.htpasswd=:\
-*.hxx=:\
-*.ico=:\
-*.img=:\
-*.ini=:\
-*.iso=:\
-*.jar=:\
-*.java=:\
-*.jl=:\
-*.jpeg=:\
-*.jpg=:\
-*.js=:\
-*.json=:\
-*.jsx=:\
-*.key=:\
-*.ksh=:\
-*.leex=:\
-*.less=:\
-*.lha=:\
-*.lhs=:\
-*.log=:\
-*.lua=:\
-*.lzh=:\
-*.lzma=:\
-*.m4a=:\
-*.m4v=:\
-*.markdown=:\
-*.md=:\
-*.mdx=:\
-*.mjs=:\
-*.mkv=:\
-*.ml=λ:\
-*.mli=λ:\
-*.mov=:\
-*.mp3=:\
-*.mp4=:\
-*.mpeg=:\
-*.mpg=:\
-*.msi=:\
-*.mustache=:\
-*.nix=:\
-*.o=:\
-*.ogg=:\
-*.pdf=:\
-*.php=:\
-*.pl=:\
-*.pm=:\
-*.png=:\
-*.pp=:\
-*.ppt=:\
-*.pptx=:\
-*.ps1=:\
-*.psb=:\
-*.psd=:\
-*.pub=:\
-*.py=:\
-*.pyc=:\
-*.pyd=:\
-*.pyo=:\
-*.r=ﳒ:\
-*.rake=:\
-*.rar=:\
-*.rb=:\
-*.rc=:\
-*.rlib=:\
-*.rmd=:\
-*.rom=:\
-*.rpm=:\
-*.rproj=鉶:\
-*.rs=:\
-*.rss=:\
-*.rtf=:\
-*.s=:\
-*.sass=:\
-*.scala=:\
-*.scss=:\
-*.sh=:\
-*.slim=:\
-*.sln=:\
-*.so=:\
-*.sql=:\
-*.styl=:\
-*.suo=:\
-*.swift=:\
-*.t=:\
-*.tar=:\
-*.tex=ﭨ:\
-*.tgz=:\
-*.toml=:\
-*.ts=:\
-*.tsx=:\
-*.twig=:\
-*.vim=:\
-*.vimrc=:\
-*.vue=﵂:\
-*.wav=:\
-*.webm=:\
-*.webmanifest=:\
-*.webp=:\
-*.xbps=:\
-*.xcplayground=:\
-*.xhtml=:\
-*.xls=:\
-*.xlsx=:\
-*.xml=:\
-*.xul=:\
-*.xz=:\
-*.yaml=:\
-*.yml=:\
-*.zip=:\
-*.zsh=:\ "
-
-
 export OPENER=rifle
-printf "\033]0; $(pwd | sed "s|$HOME|~|") - lf\007" > /dev/tty
+#printf "\033]0; $(pwd | sed "s|$HOME|~|") - lf\007" > /dev/tty
 
 
 # ZSH_HIGHLIGHT gray out command line arguments 
@@ -344,3 +135,7 @@ typeset -A ZSH_HIGHLIGHT_REGEXP
 ZSH_HIGHLIGHT_REGEXP+=(' -{1,2}[a-zA-Z0-9_-]*' fg=008)
 
 
+
+if [ -f "/home/electr0n/.tranalyzer2-0.8.10/scripts/t2_aliases" ]; then
+    . "/home/electr0n/.tranalyzer2-0.8.10/scripts/t2_aliases"
+fi

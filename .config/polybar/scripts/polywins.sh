@@ -47,11 +47,11 @@ main() {
 
 raise_or_minimize() {
   if [ "$(get_active_wid)" = "$1" ]; then
-    bspc node $1 -g hidden=on
-    #wmctrl -ir "$1" -b toggle,hidden
+    #bspc node $1 -g hidden=on
+    wmctrl -ir "$1" -b toggle,hidden
   else
-    bspc node $1 -g hidden=off -f
-    #wmctrl -ia "$1"
+    #bspc node $1 -g hidden=off -f
+    wmctrl -ia "$1"
   fi
 }
 
@@ -123,7 +123,8 @@ if [ -n "$inactive_bg" ]; then
 fi
 
 get_active_wid() {
-  active_wid=$(xprop -root _NET_ACTIVE_WINDOW)
+  active_wid=$(xdotool getactivewindow)
+  #active_wid=$(xprop -root _NET_ACTIVE_WINDOW)
   active_wid="${active_wid#*\# }"
   active_wid="${active_wid%,*}" # Necessary for XFCE
   while [ ${#active_wid} -lt 10 ]; do

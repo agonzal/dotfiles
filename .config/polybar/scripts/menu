@@ -45,7 +45,7 @@ rofi -theme "~/.config/rofi/launcher/style.rasi" -no-lazy-grab -show drun \
 -xoffset 27 -yoffset -70 \
 -location 7 \
 -columns 1 \
--show-icons -icon-theme "Black-Frost-Suru" \
+-show-icons -icon-theme "horizon-icons" \
 -font "Terminus 12" \
 -color-enabled true \
 -color-window "$BACKGROUND,$BORDER,$SEPARATOR" \
