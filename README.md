@@ -42,7 +42,7 @@ Shell: zsh / nushell
 WM: XMonad 
 Taskbar: Polybar 
 
-![It's OneDark and Hell is Hot](/screenshot/itsdark.jpg)
+![current](/screenshot/current.png)
 
 ### Approach  
 
@@ -95,8 +95,6 @@ As stated above, I run the best standalone TWM, XMonad. These are facts, trust m
 | File mgmt       | Ranger / thunar            | [x]      |
 | Process         | bpytop / fzf+xargs+pkill  | [x]      |
 | IRC             | Irssi (custom theme)      | []       |
-| ------------    | ------------------------  | -------- |
-
 
 #### Slack 
 
