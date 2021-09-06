@@ -1,7 +1,10 @@
-  ![dotfiles logo image](dots.png)
+<p align="center">
+
+![dotfiles logo image](dots.png)
+
 
 `Whatever it is you think you see, your setup was just pwned by me`
-
+</p>
 
    * [Introduction](#introduction)
    * [System](#System)
