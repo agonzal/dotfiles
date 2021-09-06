@@ -1,4 +1,10 @@
-
+genplaylist() {
+	cd ~/tunes
+	find . -name '*.mp3' -o -name '*.flac'|sed -e 's%^./%%g' > ~/.mpd/playlists/all.m3u
+	mpc clear
+	mpc load all.m3u
+	mpc update
+}
 
 pk() {
   pid=$(ps -ef | sed 1d | fzf --reverse -m --ansi --color prompt:166,border:46 --height 40%  --border=sharp --prompt="➤  " --pointer="➤ " --marker="➤ " | awk '{print $2}')
@@ -84,6 +90,8 @@ conf() {
 		mpd)		      nvim ~/.mpd/mpd.conf ;;
     kitty)        nvim ~/.config/kitty/kitty.conf ;;
 		mutt)		      nvim ~/.muttrc ;;
+    neofetch)     nvim ~/.config/neofetch/config.conf ;; 
+    aerc)         nvim ~/.config/aerc/aerc.conf ;;
 		ncmpcpp)	    nvim ~/.ncmpcpp/config ;;
 		pacman)		    svim /etc/pacman.conf ;;
     picom)        nvim ~/.config/picom/picom.conf ;;

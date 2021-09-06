@@ -29,7 +29,12 @@ alias ll='lsd -Al'
 alias ls='lsd'
 alias use='xrdb merge ~/.Xresources'
 alias load='kill -USR1 $(pidof st)'
-
+alias disks='echo "╓───── m o u n t . p o i n t s"; \
+			 echo "╙────────────────────────────────────── ─ ─ "; \
+			 lsblk -a; echo ""; \
+			 echo "╓───── d i s k . u s a g e";\
+			 echo "╙────────────────────────────────────── ─ ─ "; \
+			 df -h;'
 # SSH mgmt 
 
 alias hunt='ssh electr0n@hunt.revrse.sh'

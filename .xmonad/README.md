@@ -162,7 +162,7 @@ main' :: D.Client -> IO ()
 main' dbus = xmonad $ docks $ ewmh defaults 
 
 ```
- I call xmonad via 'xmonad % docks $ ewmh defaults '
+ I call xmonad via 'xmonad $ docks $ ewmh defaults '
 
  You can find defaults defined at line 422: 
 

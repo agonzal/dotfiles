@@ -15,7 +15,7 @@ export FZF_DEFAULT_OPTS='
 
 export TERM_PROGRAM=kitty
 export OPENER=rifle
-#printf "\033]0; $(pwd | sed "s|$HOME|~|") - lf\007" > /dev/tty
+printf "\033]0; $(pwd | sed "s|$HOME|~|") - lf\007" > /dev/tty
 
 
 # ZSH_HIGHLIGHT gray out command line arguments 

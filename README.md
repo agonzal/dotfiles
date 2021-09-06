@@ -1,3 +1,8 @@
+  ![dotfiles logo image](dots.png)
+
+`Whatever it is you think you see, your setup was just pwned by me`
+
+
    * [Introduction](#introduction)
    * [System](#System)
       * [Approach](#Approach)
@@ -12,35 +17,22 @@
          * [Keybindings](#keybindings)
       * [ZSH](#zsh)
       * [FZF](#fzf)
-   
-```ascii
-      ______   _______ _______ _______ ___ ___     _______ _______ 
-     |   _  \ |   _   |       |   _   |   |   |   |   _   |   _   |
-     |.  |   \|.  |   |.|   | |.  1___|.  |.  |   |.  1___|   1___|
-     |.  |    |.  |   `-|.  |-|.  __) |.  |.  |___|.  __)_|____   |
-     |:  1    |:  1   | |:  | |:  |   |:  |:  1   |:  1   |:  1   |
-     |::.. . /|::.. . | |::.| |::.|   |::.|::.. . |::.. . |::.. . |
-     `------' `-------' `---' `---'   `---`-------`-------`-------'
-                                             -- Go bbrrrrrrrr --
-```
 
-`Whatever it is you think you see, your setup was just pwned by me`
-
-
+ 
 ## Introduction 
 
-In this repository you will find my various dotfiles for your consumption. These days I find myself using various virtualization deployments that I needed to standarize my environment and make it easy to reproduce with as little a headache as possible.(read: minimal effort). I recently moved my workflow to only using a 
+In this repo you will find my various dotfiles for your consumption. These days I find myself using various virtualized deployments that I needed to standarize my environment and make it easy to reproduce with as little a headache as possible.(read: minimal effort). I recently moved my workflow to only using a 
 Tiling window manager such as Xmonad and bspWM with keybindings to complete most tasks including app launching/navigation. I believe that your desktop configuration should definitely be personalized/customized to not only streamline your workflow but it should look good damnit. 
 
 ## System 
 
-Host: HP EliteDesk 800 G4 TWR
-OS: ArchLinux Kernel 5.13.5-arch-1
-Disks: { rootfs 1tb nvme ssd.  ~/data 1tb nvme ssd. ~/datasets 1tb sata ssd. }
-Memory: 32gb DDR3 2600mhz 4x8GB. 
-Shell: zsh / nushell 
-WM: XMonad 
-Taskbar: Polybar 
+Host: HP EliteDesk 800 G4 TWR <br>
+OS: ArchLinux Kernel 5.13.5-arch-1 <br>
+Disks: { rootfs 1tb nvme ssd.  ~/data 1tb nvme ssd. ~/datasets 1tb sata ssd. } <br>
+Memory: 32gb DDR3 2600mhz 4x8GB. <br>
+Shell: zsh / nushell <br>
+WM: XMonad <br>
+Taskbar: Polybar <br> 
 
 ![current](/screenshot/current.png)
 
@@ -95,6 +87,7 @@ As stated above, I run the best standalone TWM, XMonad. These are facts, trust m
 | File mgmt       | Ranger / thunar            | [x]      |
 | Process         | bpytop / fzf+xargs+pkill  | [x]      |
 | IRC             | Irssi (custom theme)      | []       |
+|--------------------------------------------------------|
 
 #### Slack 
 
