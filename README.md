@@ -1,7 +1,6 @@
 <p align="center">
 
-![dotfiles logo image](dots.png)
-
+<img src="dots.png" align="center">
 
 `Whatever it is you think you see, your setup was just pwned by me`
 </p>
