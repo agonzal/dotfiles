@@ -23,18 +23,18 @@ alias pfetch="curl -s https://raw.githubusercontent.com/dylanaraps/pfetch/master
 alias nav="navi --fzf-overrides '--color fg:7,bg:-1,hl:6,fg+:6,bg+:-1,hl+:6,info:2,prompt:1,spinner:5,pointer:5,marker:3,header:8'"
 alias xmr="xmonad --restart"
 alias xmc="xmonad --recompile"
-alias topmem='ps -e -o pid,cmd,%cpu,%mem --sort=-%mem | head -n 6'
+alias topmem='watch ps -e -o pid,cmd,%cpu,%mem --sort=-%mem | head -n 6'
 alias icat="kitty +kitten icat"
 alias ll='lsd -Al'
 alias ls='lsd'
 alias use='xrdb merge ~/.Xresources'
 alias load='kill -USR1 $(pidof st)'
-alias disks='echo "╓───── m o u n t . p o i n t s"; \
-			 echo "╙────────────────────────────────────── ─ ─ "; \
-			 lsblk -a; echo ""; \
-			 echo "╓───── d i s k . u s a g e";\
-			 echo "╙────────────────────────────────────── ─ ─ "; \
-			 df -h;'
+alias disks='echo "╓───── d i s k . u s a g e";\
+			       echo "╙────────────────────────────────────── ─ ─ "; \
+			       df -h;'
+alias cpu='watch ps -Ao user,uid,comm,pid,pcpu,tty --sort=-pcpu | head -n 6'
+
+
 # SSH mgmt 
 
 alias hunt='ssh electr0n@hunt.revrse.sh'

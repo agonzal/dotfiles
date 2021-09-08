@@ -1,11 +1,12 @@
-<p align="center">
+<h3 align="center">
 
 <img src="dots.png" align="center">
 
-Whatever it is you think you see, your setup was just pwned by me
-</p>
+Whatever it is you think you see, your setup was just pwned by me!!
+</h3>
 
    * [Introduction](#introduction)
+   * [Management](#Management)
    * [System](#System)
       * [Approach](#Approach)
       * [GTK/colorscheme](#Colorscheme)
@@ -26,6 +27,11 @@ Whatever it is you think you see, your setup was just pwned by me
 In this repo you will find my various dotfiles for your consumption. These days I find myself using various virtualized deployments that I needed to standarize my environment and make it easy to reproduce with as little a headache as possible.(read: minimal effort). I recently moved my workflow to only using a 
 Tiling window manager such as Xmonad and bspWM with keybindings to complete most tasks including app launching/navigation. I believe that your desktop configuration should definitely be personalized/customized to not only streamline your workflow but it should look good damnit. 
 
+
+## Management 
+
+Currently using stow for management of my dotfiles. You can clone this repository and use it to adopt my config to your system. This won't be the case for much longer as I am moving the workflow over to a Makefile to automate setting up my entire environment and not just the dotfiles. (Sept '21).  
+
 ## System 
 
 Host: HP EliteDesk 800 G4 TWR <br>
@@ -38,14 +44,34 @@ Taskbar: Polybar <br>
 
 ![current](/screenshot/current.png)
 
+
 ### Approach  
 
-I believe your desktop environment should be a representation of YOU and customized accordingly. Personally I choose to run a standalone Tiling Window Manager, called XMonad. It's only concern is managing the windows spawned by Xorg. From here I can pick and choose which functionality I want to implement or not in my current setup. 
-This repo also includes a setup for BSPWM but I ultiimately always end up back on XMonad. 
+I believe your desktop environment should be a representation of YOU and customized accordingly. Personally I choose to run a standalone Tiling Window Manager, called XMonad. It's only concern is managing the windows. From that point I can pick and choose which functionality I want to implement to mimic a full-blown desktop environment. This repo also includes a setup for BSPWM but I ultiimately always end up back on XMonad. 
 
 ### Colorscheme
 
-Currently I am utilizing a customized version of base16_onedark. I prefer using a darker color for my background and employ that system wide wherever I can. To be honest, if I cannot rice it so that I can have a cohesive look across my entire setup then I will more then likely not run it on my main desktop, of course exceptions have to be made.  
+Currently I am utilizing a customized version of base16_onedark. I prefer using a darker color for my background and employ that system wide. Not having a unified looksystem wide would bother me, so the software I utilize tends to be highly customizable and fits into the general aestetics of my setup. These are the colors being utilized system wide from GTK theme to the custom themes/stylesets I have created. 
+
+OneDark: 
+
+#define base00 #1e222a
+##define base00 #1b1e23
+#define base01 #353b45
+#define base02 #3e4451
+#define base03 #545862
+#define base04 #565c64
+#define base05 #abb2bf
+#define base06 #b6bdca
+#define base07 #c8ccd4
+#define base08 #e06c75
+#define base09 #d19a66
+#define base0A #e5c07b
+#define base0B #98c379
+#define base0C #56b6c2
+#define base0D #61afef
+#define base0E #c678dd
+#define base0F #be5046
 
    - Xresources (system-wide)
    - GTK2/3 OneDarkish theme (custom, heavily inspired by siduck76)
@@ -68,28 +94,27 @@ As stated above, I run the best standalone TWM, XMonad. These are facts, trust m
 
 ### Software 
 
-| Task            | Application               |  Themed  |
-| ------------    | ------------------------  | -------- |
-| Notifications   | Dunst                     | [x]      |
-| Polkit          | gnome-polkit-agent-1      | []       |
-| Taskbar         | Polybar + polywins        | [x]      |
-| Connectivity    | NetworkManager applet     | []       |
-| Audio Control   | VolumeIcon + PipeWire     | []       |
-| BT Peripherals  | Bluez / blueman-applet    | []       |
-| Launcher        | rofi                      | [x]      |
-| Terminal        | Kitty / St                | [x]      |
-| Shell           | zsh(ohmyzsh) + nushell    | [x]      |
-| passwd mgmt     | self-hosted bw cli + rofi | [x]      |
-| Tasks mgmt      | todo.sh + rofi            | [x]      |
-| Logs            | lnav                      | []       |
-| Calendar        | remind + gcalcli          | []       |
-| Email           | AERC                      | [x]      |
-| Editor          | neovim / goneovim         | [x]      |
-| KnwBase/Notes   | Obisidan.md + gitbook     | [x]      |
-| File mgmt       | Ranger / thunar            | [x]      |
-| Process         | bpytop / fzf+xargs+pkill  | [x]      |
-| IRC             | Irssi (custom theme)      | []       |
-|--------------------------------------------------------|
+| Task            | Application               |  Themed   |
+| ------------    | ------------------------  | --------  |
+| Notifications   | Dunst                     | [x]       |
+| Polkit          | gnome-polkit-agent-1      | [ ]       |
+| Taskbar         | Polybar + polywins        | [x]       |
+| Connectivity    | NetworkManager applet     | [ ]       |
+| Audio Control   | VolumeIcon + PipeWire     | [ ]       |
+| BT Peripherals  | Bluez / blueman-applet    | [ ]       |
+| Launcher        | rofi                      | [x]       |
+| Terminal        | Kitty / St                | [x]       |
+| Shell           | zsh(ohmyzsh) + nushell    | [x]       |
+| passwd mgmt     | self-hosted bw  + rofi    | [x]       |
+| Tasks mgmt      | todo.sh + rofi            | [x]       |
+| Logs            | lnav                      | [ ]       |
+| Calendar        | remind + gcalcli          | [ ]       |
+| Email           | AERC                      | [x]       |
+| Editor          | nvchad / goneovim         | [x]       |
+| KnwBase/Notes   | Obisidan.md + gitbook     | [x]       |
+| File mgmt       | Ranger / thunar           | [x]       |
+| Process         | bpytop / fzf+xargs+pkill  | [x]       |
+| IRC             | Irssi (custom theme)      | [ ]       |
 
 #### Slack 
 
@@ -110,14 +135,15 @@ While this is very much still a BIG work in progress, I believe it is usuable to
 ![TelegramDesktop](/screenshot/telegramdesktop.png)
 
 
-Within this repo, the major sections (xmonad / bspwm / oh-my-zsh ) all will have individual readme's that desribe in better detail that resource.
+Within this repo, the major sections (xmonad / bspwm / oh-my-zsh ) all will have individual readme's that describe in better detail my setup.
 
 
 #### Lightcord 
 
-I leveraged dark-discord.css theme to create a custom onedark style theme for Lightcord. You can find it in .config/lightcord/themes. 
+I leveraged dark-discord.css theme to create a custom onedark style theme for Lightcord. You can find it in .config/lightcord/themes. You'll need to apply it using the Custom CSS section in settings. 
 
-![lightcord](/screenshot/lightcord.png)
+
+![lightcord](/screenshot/lightcord.gif)
 
 
 #### TMUX 
@@ -137,7 +163,9 @@ other::
 <ul>
 <li>laktak/extrakto (requires fzf)</li>
 <li>thewtex/tmux-mem-cpu-load</li>
-<li>tmux-onedark-theme</li></ul>
+</ul>
+
+I use a custom status line which mimics galaxyline from NvChad. Of course it as well uses onedark colors. 
 	
 I also use vim-tmux-pilot by sourcing pilot.tmux from my tmux config. This is installed via packer within nvim environment. 
 
@@ -157,7 +185,6 @@ I also use vim-tmux-pilot by sourcing pilot.tmux from my tmux config. This is in
 | <kbd>+</kbd> 		 		        	 | resize-pane -U 20 |
 | <kbd>  "<" </kbd>           	 | resize-pane -L 20 | 
 | <kbd> ">" </kbd> 		 		       | resize-pane -R 20 |
-|---------------------------------|------------------|
 
 
 ## ZSH 
@@ -190,8 +217,7 @@ For a more in-depth breakdown please refer to the [README.md](/ohmyzsh/README.md
 
 ### FZF 
 
-I use fzf for several ops. I use its `--preview` option to get a preview for packages available and description for yay (check yi alias in ohmyzsh/custom/aliases.zsh). The same goes for `pacrm` alias which uses to preview 
-all available packages and removes a selection. The default bindings for zsh will also use fzf for history, file searches. Nvim's telescope also uses fzf. It will look like: 
+I use fzf for several ops. I use its `--preview` option to get a preview for packages available and description for installation (check yi alias in ohmyzsh/custom/aliases.zsh). The same goes for `pacrm` alias which uses to preview list all available packages and removes a selection. The default bindings for zsh will also use fzf for history, file searches. Nvim's telescope also uses fzf. It will look like: 
 
 ![fzf](/screenshot/fzf.png)
 

@@ -32,7 +32,7 @@
 }
 
 
-/* user popout - credit to : https://github.com/A-User-s-Discord-Themes/Couve\*/
+/* user popout - credit to : https://github.com/A-User-s-Discord-Themes/Couve*/
 /*role pills*/
 .role-2irmRk{
     position: relative;
@@ -57,6 +57,24 @@
 /*Bottom*/
 .footer-1fjuF6{
     border-top: none;
+}
+
+nav[aria-label="Servers sidebar"] {
+    width: 10px;
+    transition: width 0.5s;
+}
+
+nav[aria-label="Servers sidebar"]:hover {
+    width: 70px;
+}
+
+.sidebar-2K8pFh {
+    width: 10px;
+    transition: width 0.5s;
+}
+
+.sidebar-2K8pFh:hover {
+    width: 240px;
 }
 
 .theme-dark .notches-1sAcEM.gray-3_LNYR {
@@ -173,7 +191,7 @@
 }
 
 .premiumSubscriptionAccountCredit-25i0tQ {
-    border-radius: 15px;
+    border-radius:15px;
 }
 
 .iconBackgroundTier1-2GOcU8 {
@@ -693,5 +711,4 @@ img[src="/assets/cdea41ede63f61153e4a3c0531fa3873.svg"] {
 
 .scrollableContainer-2NUZem {
 	background-color: var(--background-chatbox);
-}
-
+} 
