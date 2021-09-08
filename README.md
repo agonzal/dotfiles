@@ -51,10 +51,13 @@ I believe your desktop environment should be a representation of YOU and customi
 
 ### Colorscheme
 
-Currently I am utilizing a customized version of base16_onedark. I prefer using a darker color for my background and employ that system wide. Not having a unified looksystem wide would bother me, so the software I utilize tends to be highly customizable and fits into the general aestetics of my setup. These are the colors being utilized system wide from GTK theme to the custom themes/stylesets I have created. 
+Currently I am utilizing a customized version of base16_onedark. I prefer using a darker color for my background and employ that system wide. Not having a consistent/unified look
+system wide would bother me, so the software I utilize tends to be highly customizable and fits into the general aestetics of my setup. These are the colors being utilized system wide. 
+The onedarkish GTK theme uses the same colors as found in .Xresources. In this repo you will also see .Xresources.d which contain Xresources file for other popular colorschemes. 
 
 OneDark: 
 
+`
 #define base00 #1e222a
 ##define base00 #1b1e23
 #define base01 #353b45
@@ -72,29 +75,19 @@ OneDark:
 #define base0D #61afef
 #define base0E #c678dd
 #define base0F #be5046
-
-   - Xresources (system-wide)
-   - GTK2/3 OneDarkish theme (custom, heavily inspired by siduck76)
-   - Horizon Icons by [zodd18](https://www.github.com/zodd18/horizon.git)
-   - FZF onedark colorscheme 
-   - TMUX OneDark theme 
-   - Neovim onedark.nvim colorscheme 
-   - Zathura PDF viewer 
-   - Custom ZSH prompt + kitty (colors.conf)
-   - Slack - Custom OneDark theme 
-   - Lightcord - Custom OneDark theme 
-   - Telegram-Desktop - Custom OneDark theme. 
-   - BPYTOP with custom OneDark theme. 
-   - AERC with custom OneDark stylesets. 
-   - Rofi (App Launcher) w/ OneDark colorscheme. 
+`
 
 ### Environment 
 
-As stated above, I run the best standalone TWM, XMonad. These are facts, trust me. In an effort to streamline my workflow and to provide certain conveniences, I run several applets and other apps to provide the certain functionality you'd come to expect on a modern desktop environment. The beauty of this approach is that you can choose (read: control) what is going to be installed/running in your environment. Love XFCE but don't like Thunar? No problem, install caja or ranger or BOTH!. The flexibility in starting with a base install (600~ pkgs) and deploying only your necessary (required?) packages to satisfy your workflow is what the desktop experience should be all about. The only next logical step is to automate the whole process via a `Makefile`.  With all that said, this is the core for my daily driver. 
+As stated above, I run the best standalone TWM, XMonad. These are facts, trust me. In an effort to streamline my workflow and to provide certain 
+conveniences, I run several applets and other to provide the certain functionality you'd come to expect on a modern desktop environment. The beauty of
+this approach is that you can choose (read: control) what is going to be installed/running in your environment. Love XFCE but don't like Thunar? No problem,
+install caja or ranger or BOTH!. The flexibility in starting with a base install (600~ pkgs) and deploying only your necessary (required?) packages to satisfy
+your workflow is what the desktop experience should be all about. The only next logical step is to automate the whole process via a `Makefile`.  With all that said, this is the core for my daily driver. 
 
 ### Software 
 
-| Task            | Application               |  Themed   |
+| Task            | Application               |  Riced    |
 | ------------    | ------------------------  | --------  |
 | Notifications   | Dunst                     | [x]       |
 | Polkit          | gnome-polkit-agent-1      | [ ]       |
@@ -109,12 +102,21 @@ As stated above, I run the best standalone TWM, XMonad. These are facts, trust m
 | Tasks mgmt      | todo.sh + rofi            | [x]       |
 | Logs            | lnav                      | [ ]       |
 | Calendar        | remind + gcalcli          | [ ]       |
+| Clipboard       | greenclip w/ rofi         | [x]       |
 | Email           | AERC                      | [x]       |
 | Editor          | nvchad / goneovim         | [x]       |
 | KnwBase/Notes   | Obisidan.md + gitbook     | [x]       |
 | File mgmt       | Ranger / thunar           | [x]       |
 | Process         | bpytop / fzf+xargs+pkill  | [x]       |
-| IRC             | Irssi (custom theme)      | [ ]       |
+| IRC             | Weechat (custom theme)    | [ ]       |
+
+
+#### Weechat 
+
+I wish I could take any credit for the look and functionality of my weechat setup but all i did was change colors around and excluded some functionality I did 
+not require. Please refer to this [Github Gist](https://gist.github.com/pascalpoitras/8406501) by pascalpoitras. My changes came out looking like: 
+
+![weechat screeny](screenshot/weechat.png)
 
 #### Slack 
 
