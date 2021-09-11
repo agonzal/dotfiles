@@ -8,12 +8,14 @@ zle -N forgit::log
 zle -N forgit::diff
 zle -N forgit::checkout::branch 
 zle -N forgit::checkout::commit 
+zle -N forgit::inside_work_tree
 
 bindkey "^G^A" forgit::add 
 bindkey "^G^L" forgit::log 
 bindkey "^G^D" forgit::diff
 bindkey "^G^B" forgit::checkout::branch 
 bindkey "^G^T" forgit::checkout::commit 
+bindkey "^G^W" forgit::inside_work_tree
 
 forgit::warn() { printf "%b[Warn]%b %s\n" '\e[0;33m' '\e[0m' "$@" >&2; }
 forgit::info() { printf "%b[Info]%b %s\n" '\e[0;32m' '\e[0m' "$@" >&2; }

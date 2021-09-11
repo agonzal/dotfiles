@@ -13,7 +13,6 @@ export FZF_DEFAULT_OPTS='
   --color pointer:#adc896,info:#abb2bf,border:#565c64
   --border'
 
-export TERM_PROGRAM=kitty
 export OPENER=rifle
 printf "\033]0; $(pwd | sed "s|$HOME|~|") - lf\007" > /dev/tty
 
