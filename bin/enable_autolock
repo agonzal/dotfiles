@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+
+ICON=~/.icons/horizon-icons/32x32/apps/system-lock-screen.svg
+
+if [ -z "$(pgrep xautolock)" ]
+then
+	 ~/bin/autolock.sh &
+	notify-send -a "enable_autolock" -i $ICON "Locker: i3lock" "Enabled\n Timeout: 5m/320s"
+else
+	notify-send -a "enable_autolock" -i $ICON "Locker: i3lock" "Already enabled\n Timeout: 5m/320s"
+fi
+
+

@@ -57,7 +57,7 @@ The onedarkish GTK theme uses the same colors as found in .Xresources. In this r
 
 OneDark: 
 
-`
+```
 #define base00 #1e222a
 ##define base00 #1b1e23
 #define base01 #353b45
@@ -75,7 +75,7 @@ OneDark:
 #define base0D #61afef
 #define base0E #c678dd
 #define base0F #be5046
-`
+```
 
 ### Environment 
 
@@ -89,26 +89,26 @@ your workflow is what the desktop experience should be all about. The only next 
 
 | Task            | Application               |  Riced    |
 | ------------    | ------------------------  | --------  |
-| Notifications   | Dunst                     |- [x]       |
-| Polkit          | gnome-polkit-agent-1      |- [ ]       |
-| Taskbar         | Polybar + polywins        |- [x]       |
-| Connectivity    | NetworkManager applet     |- [ ]       |
-| Audio Control   | VolumeIcon + PipeWire     |- [ ]       |
-| BT Peripherals  | Bluez / blueman-applet    |- [ ]       |
-| Launcher        | rofi                      |- [x]       |
-| Terminal        | Kitty / St                |- [x]       |
-| Shell           | zsh(ohmyzsh) + nushell    |- [x]       |
-| passwd mgmt     | self-hosted bw  + rofi    |- [x]       |
-| Tasks mgmt      | todo.sh + rofi            |- [x]       |
-| Logs            | lnav                      |- [ ]       |
-| Calendar        | remind + gcalcli          |- [ ]       |
-| Clipboard       | greenclip w/ rofi         |- [x]       |
-| Email           | AERC                      |- [x]       |
-| Editor          | nvchad / goneovim         |- [x]       |
-| KnwBase/Notes   | Obisidan.md + gitbook     |- [x]       |
-| File mgmt       | Ranger / thunar           |- [x]       |
-| Process         | bpytop / fzf+xargs+pkill  |- [x]       |
-| IRC             | Weechat (custom theme)    |- [ ]       |
+| Notifications   | Dunst                     | -[x]       |
+| Polkit          | gnome-polkit-agent-1      | -[ ]       |
+| Taskbar         | Polybar + polywins        | -[x]       |
+| Connectivity    | NetworkManager applet     | -[ ]       |
+| Audio Control   | VolumeIcon + PipeWire     | -[ ]       |
+| BT Peripherals  | Bluez / blueman-applet    | -[ ]       |
+| Launcher        | rofi                      | -[x]       |
+| Terminal        | Kitty / St                | -[x]       |
+| Shell           | zsh(ohmyzsh) + nushell    | -[x]       |
+| passwd mgmt     | self-hosted bw  + rofi    | -[x]       |
+| Tasks mgmt      | todo.sh + rofi            | -[x]       |
+| Logs            | lnav                      | -[ ]       |
+| Calendar        | remind + gcalcli          | -[ ]       |
+| Clipboard       | greenclip w/ rofi         | -[x]       |
+| Email           | AERC                      | -[x]       |
+| Editor          | nvchad / goneovim         | -[x]       |
+| KnwBase/Notes   | Obisidan.md + gitbook     | -[x]       |
+| File mgmt       | Ranger / thunar           | -[x]       |
+| Process         | bpytop / fzf+xargs+pkill  | -[x]       |
+| IRC             | Weechat (custom theme)    | -[x]       |
 
 
 #### Weechat 

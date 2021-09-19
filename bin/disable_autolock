@@ -1,0 +1,9 @@
+#!/bin/zsh
+
+ICON=~/.icons/horizon-icons/32x32/apps/system-lock-screen.svg
+
+running=$(ps h -C xautolock | grep -wv $$ | wc -l);
+[[ $running < 1 ]] && notify-send -a "disable_autolock" -i $ICON "Locker: betterlockscreen" "Already Disabled." && exit;
+
+notify-send -a "disable_autolock" -i $ICON "Locker: betterlockscreen" "Disabled."
+pkill xautolock
