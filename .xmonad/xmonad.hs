@@ -282,7 +282,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
   M.fromList $
     -- launch a terminal
     [ ((shiftMask, xK_Return), spawn $ XMonad.terminal conf),
-      ((modm .|. shiftMask, xK_Return), spawn "/usr/local/bin/st"),
+      ((modm .|. shiftMask, xK_Return), spawn "tabbed -n scratchterm  -r 2  -t '#1e222a' -T '#565c64' -u '#1e222a' -U '#565c64' st -w '' -c scratchterm  -e zsh"),
       
       -- Dropdowns
       ((mod1Mask, xK_m), spawn "tdrop --wm xmonad -n 1 -h 80% -w 60% -x 20% -y 10% kitty --class mail -e aerc"),
@@ -293,7 +293,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       ((mod1Mask, xK_e), spawn "tdrop --wm xmonad -n 5 -w 60% -h 70% -x 20% -y 20% kitty --class nvim -e nvim"),
       ((mod1Mask, xK_g), spawn "tdrop --wm xmonad -w 60% -h 80% -x 20% -y 10% goneovim"),
       ((mod1Mask, xK_f), spawn "tdrop --wm xmonad -w 30% -h 70% thunar"),
-      ((mod1Mask, xK_b), spawn "tdrop --wm xmonad -w 29% -h 70% -x 70% st -c dropdown -e bpytop"),
+      ((mod1Mask, xK_b), spawn "tdrop --wm xmonad -w 29% -h 70% -x 70% st -c dropdown -e btop"),
 
       -- Media function keys (No Modifier)
       ((0, xF86XK_WWW), spawn "google-chrome-stable"), -- laptop config
@@ -490,7 +490,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) =
       -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
-myLayout = minimize $ B.boringWindows $ defaultFancyBorders (avoidStruts ( centered |||  tiled ||| Mirror (Mirror tiled) ||| tabs ||| sidedecor simpleFloat ))
+myLayout = minimize $ B.boringWindows $ defaultFancyBorders (avoidStruts ( centered |||  tiled ||| Mirror (Mirror tiled) ||| tabs ||| simpleFloat ))
   where
     -- avoidStruts( defaultFancyBorders tiled ||| defaultFancyBorders simpleFloat ||| tabs)
 
@@ -510,7 +510,7 @@ myLayout = minimize $ B.boringWindows $ defaultFancyBorders (avoidStruts ( cente
 
     centered = ThreeColMid 1 (3 / 100) (1 / 2)
 
-    sidedecor = decoration shrinkText standardTheme (SideDecoration L)
+    -- sidedecor = decoration shrinkText standardTheme (SideDecoration L)
 
 myManageHook =
   fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
@@ -529,17 +529,18 @@ myManageHook =
         className =? "Pavucontrol" --> doCenterFloat,
         className =? "kitty" --> doCenterFloat,
         className =? "nvim" --> doFloat, 
-        className =? "tabbed" --> doFloat,
+        className =? "tabbed" --> doCenterFloat,
         className =? "scratchterm" --> doFloat,
         className =? "irc" --> doFloat,
         className =? "goneovim" --> doFloat,
         className =? "mail" --> doFloat,
         className =? "SimpleScreenRecorder" --> doCenterFloat,
+        className =? "Transmission-gtk" --> doCenterFloat,
         className =? "obsidian" --> (doCenterFloat <+> doShift (myWorkspaces !! 6)),
         className =? "calibre" --> (doCenterFloat <+> doShift (myWorkspaces !! 3)),
         className =? "Google-chrome" --> doShift (myWorkspaces !! 1),
         className =? "deluge" --> (doCenterFloat <+> doShift (myWorkspaces !! 5)),
-        className =? "slack" --> doShift (myWorkspaces !! 4),
+        className =? "Slack" --> doShift (myWorkspaces !! 4),
         className =? "Lightcord" --> doShift (myWorkspaces !! 4),
         className =? "TelegramDesktop" --> doShift (myWorkspaces !! 4),
         className =? "Virt-manager" --> (doCenterFloat <+> doShift (myWorkspaces !! 7)),
@@ -604,7 +605,6 @@ myLogHook = fadeInactiveLogHook 0.7
 --
 -- By default, do nothing.
 myStartupHook = do
-  spawn "~/bin/layout.sh &"
   spawn "~/bin/autolock.sh &"
   spawn "blueman-applet &"
   spawn "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &"
@@ -618,9 +618,9 @@ myStartupHook = do
   spawn "setxkbmap -option ctrl:nocaps "
   spawn "xcape -e 'Control_L=Escape'"
   spawn "xcape -e 'Super_L=Super_L|o'"
-  spawn "nitrogen --restore"
-  spawn "feh --bg-center ~/wallpapers/spaceman-oned.jpg"
   spawn "~/.config/polybar/launch.sh xmonad"
+  spawn "telegram-desktop"
+  spawn "slack"
   setWMName "LG3D"
   ewmhDesktopsStartup
 
@@ -700,8 +700,12 @@ help =
       "mod-shift-y  Decrease Up GAP",
       "mod-shift-u  Decrease Down GAP",
       "mod-shift-i  Decrease Right GAP",
-      "-- floating layer support",
-      "mod-t  Push window back into tiling; unfloat and re-tile it",
+      "",
+      "-- CUSTOM floating layer support",
+      "mod-f            float or sink current focused window",
+      "mod-c            float current focused window (keep same size as tiled)",
+      "mod-shift-f      float current focused window + resize 1/4 of screen + move to bottom right",
+      "mod-shift-c      float current focused window + doCenterFloat",
       "",
       "-- increase or decrease number of windows in the master area",
       "mod-comma  (mod-,)   Increment the number of windows in the master area",
@@ -726,9 +730,17 @@ help =
       "mod-alt-f   Toggle NBFULL",
       "mod-alt-n   Toggle NOBORDERS",
       "",
-      "-- ScratchPads ",
+      "-- ScratchPads via tdrop ",
       "ALT + T   Launch myTerminal",
-      "ALT + M   Launch ncmpcpp via myTerminal",
-      "ALT + B   Launch bpytop via myTerminal",
-      "ALT + F   Launch ranger via myTerminal "
+      "ALT + M   Launch aerc via myTerminal",
+      "ALT + B   Launch bpytop via st",
+      "ALT + R   Launch ranger via myTerminal",
+      "ALT + I   Launch weechat via myTerminal",
+      "ALT + F   Launch Thunar",
+      "ALT + E   Launch neovim via myTermainl",
+      "ALT + G   Launch Goneovim",
+      "",
+      "Using tdrop as a drop-in replacement for standard scratchpads on xmonad. Each tdrop class has manageHooks for", 
+      "floating and I set custom locations + height and width for each window. Invoking bpytop will appear on the top",
+      " right like a true drop-down terminal etc... "
     ]

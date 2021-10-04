@@ -16,7 +16,6 @@ alias ttcmd="echo '' | fzf -q '$*' --prompt '│ ' --pointer '― ' --preview-wi
 alias fet="info='n user os sh wm kern pkgs mem term col' separator=' | ' accent='2' fet.sh"
 alias fm="setsid -f thunar"
 alias c="bc -l"
-alias btop="bpytop"
 alias yi="yay -Slq | fzf -m --preview 'yay -Si {1}' | xargs -ro yay -S"
 alias cat="bat"
 alias pfetch="curl -s https://raw.githubusercontent.com/dylanaraps/pfetch/master/pfetch | sh"
@@ -26,7 +25,7 @@ alias xmc="xmonad --recompile"
 alias topmem='watch ps -e -o pid,cmd,%cpu,%mem --sort=-%mem | head -n 6'
 alias icat="kitty +kitten icat"
 alias ll='lsd -Al'
-alias ls='lsd'
+alias ls='lsd -A'
 alias use='xrdb merge ~/.Xresources'
 alias load='kill -USR1 $(pidof st)'
 alias disks='echo "╓───── d i s k . u s a g e";\
