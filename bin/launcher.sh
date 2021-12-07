@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
-
-## Author  : Aditya Shakya
-## Mail    : adi1090x@gmail.com
-## Github  : @adi1090x
-## Twitter : @adi1090x
-## Modified for my usage. 
-
-# >> Created and tested on : rofi 1.6.0-1
+# shell script to launch rofi w/ clipboard support 
+# github.com/agonzal/dotfiles 
 
 theme="style"
 #theme="dracula"
@@ -14,7 +8,7 @@ theme="style"
 dir="$HOME/.config/rofi/launcher"
 
 rofi -no-lazy-grab -show drun \
--modi drun,window,ssh,file-browser,":greenclip print" \
--theme $dir/"$theme" -display-file-browser ﱮ \
--drun-icon-theme "Black-Frost-Suru"
+-modi window,drun,run,✗:~/.config/rofi/scripts/kill.sh,filebrowser," :/home/electr0n/bin/greenclip print" \
+-theme $dir/"$theme" -display-filebrowser "🗁  " \
+-drun-icon-theme "horizon-icons"
 

@@ -1,11 +1,8 @@
 #!/bin/bash
-# Screen recording script
-# Author: elenapan @ github
-# Requires ffmpeg
-# Info: https://trac.ffmpeg.org/wiki/Capture/Desktop
-# --------------------------------------------
-# This directory will be created automatically if it does not exist
-RECORDINGS_DIR=~/Videos/Recordings
+
+
+RECORDINGS_DIR=~/vids/recordings/
+
 # --- Resolution ---
 # >> Manually
 # SCREEN_RESOLUTION=1920x1080
@@ -20,7 +17,7 @@ AUDIO=" -f pulse -ac 2 -i default "
 # AUDIO=" f alsa -ac 2 -i hw:0 "
 
 # Notification icon path
-REC_ICON_PATH=~/home/electr0n/.local/share/icons/Winter/actions/24/media-playback-start.svg
+REC_ICON_PATH=/home/electr0n/.icons/horizon-icons/16x16/actions/media-playback-start.svg
 # --------------------------------------------
 
 # Create directory if needed
@@ -34,14 +31,14 @@ if [ -z "$pid" ]; then
     TIMESTAMP="$(date +%Y.%m.%d-%H.%M.%S)"
     FILENAME=$RECORDINGS_DIR/$TIMESTAMP.screenrec.mp4
 
-    notify-send "Screen is being recorded." --urgency low -i $REC_ICON_PATH
+    notify-send -a "screenrec.sh" "Screen is being recorded." --urgency low -i $REC_ICON_PATH
 
     # --- Hardware decoding (for NVIDIA GPU) ---
     # Needs ffmpeg compiled with --enable-nvenc
     # ffmpeg $AUDIO -s $SCREEN_RESOLUTION -f x11grab -i :0.0 -c:v h264_nvenc -profile high444p -pixel_format yuv444p -preset default $FILENAME
 
     # --- Software decoding ---
-    ffmpeg -f x11grab -s $SCREEN_RESOLUTION -i :0.0 -vcodec libx264 -preset medium -crf 22 -y $FILENAME
+    ffmpeg -f x11grab -s $SCREEN_RESOLUTION -i :0 -vcodec libx264 -preset medium -crf 22 -y $FILENAME
 
     notify-send "Screen recording over." --urgency low -i $REC_ICON_PATH
 else

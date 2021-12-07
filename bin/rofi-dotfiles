@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Options
-DOTS_GIT="$HOME/dotfiles/.git"
+DOTS_GIT="$HOME/dots/.git"
 PROMPT="dots: "
 
 dotfile_paths=$(/usr/bin/git --git-dir=$DOTS_GIT --work-tree=$HOME ls-tree -r main --name-only)

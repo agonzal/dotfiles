@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+  {-# LANGUAGE MultiParamTypeClasses #-}
 
 --     ___ ___  ___ ___ _______ ______  _______ ______
 --    (   Y   )|   Y   |   _   |   _  \|   _   |   _  \
@@ -48,6 +48,8 @@ import Data.Monoid ()
 -- FancyBorders (double borders)
 import FancyBorders
 
+-- Themes
+import Themes 
 
 import Graphics.X11.ExtraTypes.XF86
   ( xF86XK_AudioLowerVolume,
@@ -69,8 +71,9 @@ import System.Exit ()
 import System.IO
 import XMonad
 
-
--- XMonad Actions
+------------------------------
+-- XMonad Actions ------------
+------------------------------
 
 import XMonad.Actions.CycleWS (nextWS, prevWS, shiftToNext, shiftToPrev)
 import qualified XMonad.Actions.FlexibleResize as Flex
@@ -85,7 +88,7 @@ import XMonad.Actions.WithAll (killAll)
 
 
 -------------------------------
--- XMonad Hooks --------------
+----- XMonad Hooks ------------
 -------------------------------
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP)
 import XMonad.Hooks.EwmhDesktops (ewmh, ewmhDesktopsEventHook, ewmhDesktopsEventHookCustom, ewmhDesktopsLogHook, ewmhDesktopsStartup)
@@ -124,6 +127,7 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.ResizableTile (MirrorResize (..), ResizableTall (..))
 import XMonad.Layout.Spacing (Border (Border), spacingRaw)
 import XMonad.Layout.Tabbed
+import XMonad.Layout.TabBarDecoration
 import XMonad.Layout.SubLayouts
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.ToggleLayouts (ToggleLayout (Toggle), ToggleLayouts)
@@ -143,12 +147,14 @@ import XMonad.Util.WorkspaceCompare (getSortByIndex, getSortByTag)
 -- certain contrib modules.
 --
 myTerminal = "kitty"
+myBrowser  = "google-chrome-stable"
 
 myNormalBorderColor = "#abb2bf"
 
-myFocusedBorderColor = "#c8ccd4"
+myFocusedBorderColor = "#abb2bf"
 
-myActiveBorderColor = "#c8ccd4"
+myActiveBorderColor = "#e5c07b"
+
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -170,17 +176,19 @@ myWorkspaces = ["\xf120", "\xf268", "\xe7c5", "\xfad9", "\xf292", "\xf200", "\xf
 myTabConfig =
   def
     { activeColor = "#1e222a",
-      inactiveColor = "#565a64",
+      inactiveColor = "#1e222a",
       urgentColor = "#e06c75",
       activeBorderColor = "#1e222a",
-      inactiveBorderColor = "#565a64",
-      urgentBorderColor = "#e06c75",
+      activeBorderWidth = 0,
+      inactiveBorderColor = "#98c379",
+      inactiveBorderWidth = 2,
+      urgentBorderColor = "#e5c07b",
 
       activeTextColor = "#abb2bf",
-      inactiveTextColor = "#c8ccd4",
+      inactiveTextColor = "#abb2bf",
       urgentTextColor = "#e5c07b",
       fontName = "xft:JetBrainsMonoMedium:style=bold:size=6:antialias=true",
-      decoHeight = 10
+      decoHeight = 1 
     }
 
 -- standardTheme used with SideDecoration module.
@@ -227,11 +235,11 @@ myScratchPads =
     NS "glance" (myTerminal ++ " --class glance -e glances") (resource =? "glance") myPosition,
     NS "ranger" (myTerminal ++ " --class ranger -e ranger") (className =? "ranger") myPosition
   ]
-  where
-    myPosition = customFloating $ W.RationalRect (1 / 3) (1 / 3) (1 / 2) (1 / 2)
+    where
+      myPosition = customFloating $ W.RationalRect (1 / 3) (1 / 3) (1 / 2) (1 / 2)
 
 -----------------------------------------
--- Floating functions
+  -- Floating functions
 -----------------------------------------
 centerRect = W.RationalRect 0.25 0.25 0.5 0.5
 
@@ -254,8 +262,8 @@ customFloat win = do
 toggleFloat w =
   windows
     ( \s ->
-        if M.member w (W.floating s)
-          then W.sink w s
+      if M.member w (W.floating s)
+         then W.sink w s
           else (W.float w (W.RationalRect (1 / 3) (2 / 4) (1 / 2) (2 / 5)) s)
     )
 
@@ -276,14 +284,14 @@ addEWMHFullscreen = do
   mapM_ addNETSupported [wms, wfs]
 
 ------------------------------------------------------------------------
--- Key bindings. Add, modify or remove key bindings here.
+  -- Key bindings. Add, modify or remove key bindings here.
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
   M.fromList $
     -- launch a terminal
     [ ((shiftMask, xK_Return), spawn $ XMonad.terminal conf),
       ((modm .|. shiftMask, xK_Return), spawn "tabbed -n scratchterm  -r 2  -t '#1e222a' -T '#565c64' -u '#1e222a' -U '#565c64' st -w '' -c scratchterm  -e zsh"),
-      
+
       -- Dropdowns
       ((mod1Mask, xK_m), spawn "tdrop --wm xmonad -n 1 -h 80% -w 60% -x 20% -y 10% kitty --class mail -e aerc"),
       -- ((mod1Mask, xK_t), spawn "tdrop --wm xmonad -n 2 -h 80% -w 60% -x 20% -y 10% tabbed -n scratchterm -r 2 -t '#1e222a' -T '#565c64' -u '#1e222a' -U '#565c64' st -w '' -c scratchterm -e zsh"),
@@ -296,37 +304,38 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       ((mod1Mask, xK_b), spawn "tdrop --wm xmonad -w 29% -h 70% -x 70% st -c dropdown -e btop"),
 
       -- Media function keys (No Modifier)
-      ((0, xF86XK_WWW), spawn "google-chrome-stable"), -- laptop config
+      ((0, xF86XK_WWW), spawn myBrowser), -- laptop config
       ((0, xF86XK_MyComputer), spawn "thunar"), -- doesm't work ?
       ((0, xF86XK_Mail), spawn "tdrop --wm xmonad -n 3 -w 60% -h 80% -x 20% -y 10% kitty --class mail -e aerc"),
-      ((0, xF86XK_HomePage), spawn "google-chrome-stable"),
+      ((0, xF86XK_HomePage), spawn myBrowser),
       ((0, xF86XK_Search), spawn "thunar"),
       ((0, xF86XK_Calculator), spawn "galculator"),
-      
+
       -- toggleFloats (Super / supert+shift)
       ((modm, xK_f), withFocused toggleFloat),
       ((modm .|. shiftMask, xK_f), withFocused customFloat),
       ((modm, xK_c), withFocused centerFloat),
       ((modm .|. shiftMask, xK_c), withFocused centerFloat'),
-      
+
       -- lock screen Super + ALT + L
       ((modm .|. mod1Mask, xK_l), spawn "~/bin/lockscreen"),
-     
+
      -- Enable/disable xautolock
       ((modm, xK_a), spawn "exec ~/bin/enable_autolock"),
       ((modm .|. shiftMask, xK_a), spawn "exec ~/bin/disable_autolock"),
-      
+
       -- Launch rofi enabled scripts
       ((modm, xK_o), spawn "~/bin/launcher.sh"), -- rofi + windowcd / file / clipboard
       ((modm, xK_p), spawn "bwmenu"), -- bitwarden rofi passwd management
       ((modm, xK_t), spawn "~/bin/dofi"), -- task management
 
-      
+
       -- Chats: Super + Alt
+      ((modm .|. mod1Mask, xK_c), spawn "calibre"),
       ((modm .|. mod1Mask, xK_s), spawn "slack"),
       ((modm .|. mod1Mask, xK_d), spawn "lightcord"),
       ((modm .|. mod1Mask, xK_t), spawn "telegram-desktop"),
-      
+
       -- Audio keys (No Modifier)
       ((0, xF86XK_AudioPlay), spawn "mpc toggle"),
       ((0, xF86XK_AudioPrev), spawn "mpc prev"),
@@ -334,16 +343,16 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       ((0, xF86XK_AudioRaiseVolume), spawn "amixer sset Master 5%+"),
       ((0, xF86XK_AudioLowerVolume), spawn "amixer sset Master 5%-"),
       ((0, xF86XK_AudioMute), spawn "amixer sset Master toggle"),
-      
+
       -- Brightness keys
       ((0, xF86XK_MonBrightnessUp), spawn "brightnessctl s +10%"),
       ((0, xF86XK_MonBrightnessDown), spawn "brightnessctl s 10-%"),
-      
+
       -- ScratchPads (Modifier: ALT key)
       -- ((mod1Mask, xK_m), namedScratchpadAction myScratchPads "music"),
       -- ((mod1Mask, xK_t), namedScratchpadAction myScratchPads "terminal"),
       -- ((mod1Mask, xK_r), namedScratchpadAction myScratchPads "ranger"),
-      
+
       -- Floating windows management (control + shift + direction)
       ((controlMask .|. shiftMask, xK_Left), withFocused (keysMoveWindow (-10, 0))),
       ((controlMask .|. shiftMask, xK_Up), withFocused (keysMoveWindow (0, -10))),
@@ -358,18 +367,15 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       ((controlMask .|. mod1Mask, xK_Page_Down), withFocused (keysAbsResizeWindow (10, 10) (0, 0))),
       ((controlMask .|. mod1Mask, xK_Page_Up), withFocused (keysAbsResizeWindow (-10, -10) (0, 0))),
       
-      -- SubLayouts Tabbed 
-      ((controlMask .|. mod1Mask, xK_t), withFocused (sendMessage . MergeAll)),   
-      
-  
       -- ResizableTall
       ((modm, xK_Down), sendMessage MirrorShrink),
       ((modm, xK_Up), sendMessage MirrorExpand),
       
+
       -- Screenshot
       ((0, xK_Print), spawn "screenshot.sh"),                               -- full screenshot 
       ((shiftMask, xK_Print), spawn "screenshot.sh -s"),                    -- area/window to FILE
-      ((controlMask .|. shiftMask, xK_Print), spawn "sreenshot.sh -c"),     -- area/window to CLIP
+      ((controlMask, xK_Print), spawn "sreenshot.sh -c"),                   -- area/window to CLIP
       ((modm, xK_Print), spawn "exec ~/bin/screenrec.sh"),                  -- screnrec via ffmpeg 
       ((modm .|. controlMask, xK_Print), spawn "pkill ffmpeg"),
       
@@ -381,12 +387,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       
       -- Minimize window ( super + alt )
       ((modm .|. mod1Mask, xK_m), withFocused minimizeWindow), -- polywins handles maximize for my setup.
-      ((modm .|. controlMask, xK_m), withLastMinimized maximizeWindowAndFocus),
-      
-      -- Enable/disable xautolock
-      ((modm, xK_a), spawn "exec ~/bin/enable_autolock"),
-      ((modm .|. shiftMask, xK_a), spawn "exec ~/bin/disable_autolock"),
-      
+      ((mod1Mask .|. shiftMask, xK_m), withLastMinimized maximizeWindowAndFocus),
+            
       -- close focused window / kill all ws windows
       ((modm, xK_x), kill),
       ((modm .|. mod1Mask, xK_x), killAll),
@@ -402,6 +404,18 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       ((modm .|. shiftMask, xK_u), sendMessage $ DecGap 10 D), -- decrement the bottom gap
       ((modm .|. controlMask, xK_i), sendMessage $ IncGap 10 R), -- increment the right-hand gap
       ((modm .|. shiftMask, xK_i), sendMessage $ DecGap 10 R), -- decrement the right-hand gap
+
+      -- SubLayouts 
+      ((modm .|. controlMask, xK_h), sendMessage $ pullGroup L),
+      ((modm .|. controlMask, xK_l), sendMessage $ pullGroup R),
+      ((modm .|. controlMask, xK_k), sendMessage $ pullGroup U),
+      ((modm .|. controlMask, xK_j), sendMessage $ pullGroup D),
+
+      ((modm .|. controlMask, xK_m), withFocused (sendMessage . MergeAll)),
+      ((modm .|. mod1Mask, xK_u), withFocused (sendMessage . UnMerge)),
+
+      ((modm .|. controlMask, xK_period), onGroup W.focusUp'),
+      ((modm .|. controlMask, xK_comma), onGroup W.focusDown'),
 
       -- Cycle through layout algorithms.
       ((modm, xK_space), sendMessage NextLayout),
@@ -446,7 +460,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       -- Restart xmonad
       ((modm, xK_q), spawn "xmonad --recompile ; xmonad --restart"),
       -- Run xmessage with a summary of the default keybindings (useful for beginners)
-      ((modm .|. shiftMask, xK_slash), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+     --((modm .|. shiftMask, xK_slash), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+     ((modm .|. shiftMask, xK_slash), spawn ("echo \"" ++ help ++ "\" | zenity --width 600 --height 1200 --text-info -"))
     ]
       ++
       -- mod-[1..9], Switch to workspace N
@@ -490,7 +505,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) =
       -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
-myLayout = minimize $ B.boringWindows $ defaultFancyBorders (avoidStruts ( centered |||  tiled ||| Mirror (Mirror tiled) ||| tabs ||| simpleFloat ))
+myLayout = minimize $ subTabbed $ B.boringWindows $ defaultFancyBorders (avoidStruts ( centered |||  tiled ||| tabs ))
   where
     -- avoidStruts( defaultFancyBorders tiled ||| defaultFancyBorders simpleFloat ||| tabs)
 
@@ -506,7 +521,7 @@ myLayout = minimize $ B.boringWindows $ defaultFancyBorders (avoidStruts ( cente
     -- Percent of screen to increment by when resizing panes
     delta = 1 / 100
 
-    tabs = tabbedBottom shrinkText myTabConfig
+    tabs = tabbedBottom shrinkText (theme oneDarkTheme) 
 
     centered = ThreeColMid 1 (3 / 100) (1 / 2)
 
@@ -524,6 +539,7 @@ myManageHook =
         className =? "Blueman-manager" --> doCenterFloat,
         className =? "Pavucontrol" --> doCenterFloat,
         className =? "Thunar" --> doFloat,
+        className =? "Pcmanfm" --> doFloat,
         className =? "Bitwarden" --> doFloat,
         className =? "Uget-gtk" --> doCenterFloat,
         className =? "Pavucontrol" --> doCenterFloat,
@@ -607,7 +623,7 @@ myLogHook = fadeInactiveLogHook 0.7
 myStartupHook = do
   spawn "~/bin/autolock.sh &"
   spawn "blueman-applet &"
-  spawn "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &"
+  spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &"
   spawnOnce "nm-applet &"
   spawnOnce "greenclip daemon"
   spawnOnce "volumeicon &"
@@ -616,11 +632,12 @@ myStartupHook = do
   spawnOnce "xsetroot -cursor_name left_ptr"
   spawn "xset -dpms s off"
   spawn "setxkbmap -option ctrl:nocaps "
-  spawn "xcape -e 'Control_L=Escape'"
-  spawn "xcape -e 'Super_L=Super_L|o'"
+  spawnOnce "xcape -e 'Control_L=Escape'"
+  spawnOnce "xcape -e 'Super_L=Super_L|o'"
   spawn "~/.config/polybar/launch.sh xmonad"
   spawn "telegram-desktop"
-  spawn "slack"
+  spawn "nitrogen --restore"
+  spawn myBrowser 
   setWMName "LG3D"
   ewmhDesktopsStartup
 
@@ -631,12 +648,32 @@ myStartupHook = do
      -- Request access to the DBus name
      --D.requestName dbus (D.busName_ "org.xmonad.Log")
          --[D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-main :: IO ()
-main = do
-  forM_ [".xmonad-workspace-log", ".xmonad-title-log"] $ \file -> safeSpawn "mkfifo" ["/tmp/" ++ file]
-  xmonad $ ewmh $ docks $ fullscreenSupport $ defaults  
+
+mkDbusClient :: IO D.Client
+mkDbusClient = do
+  dbus <- D.connectSession
+  D.requestName dbus (D.busName_ "org.xmonad.log") opts
+  return dbus
  where
-  myBar = "polybar"
+  opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+
+-- Emit a DBus signal on log updates
+dbusOutput :: D.Client -> String -> IO ()
+dbusOutput dbus str =
+  let opath  = D.objectPath_ "/org/xmonad/Log"
+      iname  = D.interfaceName_ "org.xmonad.Log"
+      mname  = D.memberName_ "Update"
+      signal = D.signal opath iname mname
+      body   = [D.toVariant $ UTF8.decodeString str]
+  in  D.emit dbus $ signal { D.signalBody = body }
+
+main :: IO ()
+main = mkDbusClient>>= main' 
+
+main' :: D.Client -> IO ()
+main' dbus = xmonad $ ewmh $ docks $ fullscreenSupport $ defaults  
+ where
+  myBar = "polybar -c ~/.config/polybar/config.ini -r"
   
 --  xmonad $ fullscreenSupport $ docks $ ewmh defaults
 
@@ -655,7 +692,7 @@ defaults = def
       mouseBindings = myMouseBindings,
       -- hooks, layouts
       manageHook = myManageHook,
-      layoutHook = gaps [(L, 10), (R, 10), (U, 5), (D,40)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders myLayout,
+      layoutHook = gaps [(L, 10), (R, 10), (U, 5), (D,45)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders myLayout,
       handleEventHook = myEventHook <+> restoreMinimizedEventHook <+> minimizeEventHook <+> fullscreenEventHook,
       logHook = myLogHook >> eventLogHookForPolyBar,      
       startupHook = myStartupHook >> addEWMHFullscreen

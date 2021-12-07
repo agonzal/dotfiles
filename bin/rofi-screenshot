@@ -8,7 +8,7 @@
 ##    stop recording with rofi-screenshot -s
 
 # Screenshot directory
-screenshot_directory="$HOME/Pictures/Screenshots"
+screenshot_directory="$HOME/pics/scrnshts"
 
 # set ffmpeg defaults
 ffmpeg() {

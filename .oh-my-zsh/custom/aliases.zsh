@@ -1,3 +1,10 @@
+
+alias dot='git --git-dir=$HOME/dots --work-tree=$HOME'
+alias commit='dot commit -m'
+alias stage='dot stage'
+alias status='dot status'
+alias push='dot push origin master'
+alias analysis='cd ~/analysis'
 alias nfetch='neofetch --source ~/.config/neofetch/image/Archlinux-gray.png --backend kitty --colors 1 1'
 alias pacrm="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
 alias t='todo.sh'

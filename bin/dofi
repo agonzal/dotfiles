@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 
+# Theme
+THEME=~/.config/rofi/launcher/style.rasi   # OneDark-base16 colorscheme. 
+
+# Greeting
+USERNAME=`whoami`
+
 # default settings
-_rofi () {
-    rofi -regex -tokenize -i -lines 30 -width 1500 -no-levenshtein-sort "$@"
+ _rofi () {
+    rofi -theme $THEME -regex -tokenize -i -lines 15 -width 1300 -no-levenshtein-sort "$@"
 }
-noteroot="$HOME/.tasks/todo"
-done_notes="${noteroot}/todo/done"
-BROWSER=chromium
+noteroot="$HOME/.tasks/"
+done_notes="${noteroot}/done"
+BROWSER=google-chrome-stable 
 url_length=100
 
 # hotkeys
@@ -17,8 +23,8 @@ task_icon=""
 
 
 # colors
-title_color="#2d7ed8"
-date_color="#FF00FF"
+title_color="#d19a66"
+date_color="#e05c76"
 
 # load custom settings
 source $HOME/.config/dofi/config
@@ -48,7 +54,7 @@ main () {
         view="active"
     fi
     cd "${notes}"
-    HELP="Welcome to dofi. Use <span color='${title_color}'>${new}</span> to create a new todo
+    HELP="Hi $USERNAME, Use <span color='${title_color}'>${new}</span> to create a new todo
 Use <span color='${title_color}'>${switch}</span> to switch between active/done todos. <span color='${title_color}'>${switch_agenda}</span> switches agenda view."
     if [[ $agenda == "1" ]]; then
       export view="agenda"

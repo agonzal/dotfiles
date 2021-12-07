@@ -1,0 +1,38 @@
+#!/bin/sh
+
+#               Shelper, a script that helps another scripts                  #
+#  This will provide you with a set of functions to make your scripts easier  #
+
+#            ! Source it in order to have access to the functions !           #
+
+# Notifications
+s_notify() { # Just add a notification
+    # shellcheck disable=SC2068
+    case $# in
+        0) notify-send -u critical "No args provided!" && exit 1 ;;
+        1) notify-send "$1" ;;
+        2) notify-send "$1" "$2" ;;
+        3) notify-send -u "$1" "$2" "$3" ;;
+        *) notify-send "$@" ;;
+    esac
+}
+s_notify_exit() {
+    s_notify "$@" && exit 1
+}
+
+# Colors for terminal output
+red="\033[0;31m"
+orange="\033[0;33m"
+nc="\033[0m"
+
+# Print information from the current script
+s_err() { # Print an error than exit
+    [ -z "$1" ] && echo "shelper: No error message provided!" && exit 1
+    printf "%s:$red error$nc: %s\n" "${0##*/}" "$1"
+    exit 1
+}
+
+s_warn() { # Print a warning
+    [ -z "$1" ] && echo "shelper: No warning message provided!" && exit 1
+    printf "%s:$orange warning$nc: %s\n" "${0##*/}" "$1"
+}

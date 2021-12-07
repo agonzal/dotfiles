@@ -1,0 +1,11 @@
+#!/bin/bash
+INTERFACE=eno1
+A=($(ifconfig $INTERFACE | grep bytes | sed -e 's/[(|)]//g' -e 's/:/ /g' -e 's/  */ /g'))
+sleep 30
+B=($(ifconfig $INTERFACE | grep bytes | sed -e 's/[(|)]//g' -e 's/:/ /g' -e 's/  */ /g'))
+echo -e ${A[@]}"\n"${B[@]}
+AVG=$(expr ${B[2]} - ${A[2]})
+AVGKB=$(echo AVG | awk '{ byte =$1 /1024; print byte " KB" }')
+#AVGMB==$(echo AVG | awk '{ byte =$1 /1024/1024; print byte " MB" }')
+#AVGMB==$(echo AVG | awk '{ byte =$1 /1024/1024/1024/; print byte " GB" }')
+echo -e "30 sec average\n"$AVG"\n"$AVGKB

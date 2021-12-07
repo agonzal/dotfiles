@@ -15,10 +15,10 @@ eq() {  # equals  |  [ a = b ] with globbing
 }
 
 ## DE
-#wm=$XDG_CURRENT_DESKTOP
+wm=$XDG_DESKTOP_SESSION
 #[ "$wm" ] || wm=$DESKTOP_SESSION
 
-wm=`wmctrl -m | awk '/Name: /{print $(2)}'`
+#wm=`wmctrl -m | awk '/Name: /{print $(2)}'`
 
 ## Distro
 # freedesktop.org/software/systemd/man/os-release.html

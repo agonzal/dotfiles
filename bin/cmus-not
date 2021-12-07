@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+status=$( cmus-remote -Q | grep "status")
+title=$( cmus-remote -Q | grep "tag title\s" | sed s/"tag title\s"/""/g )
+artist=$( cmus-remote -Q | grep "tag artist\s" | sed s/"tag artist\s"/""/g)
+album=$( cmus-remote -Q | grep "tag album\s" | sed s/"tag album\s"/""/g)
+file=$( cmus-remote -Q | grep "file\s" | sed s/"file\s"/""/g)
+icon="/tmp/cmus_icon.png"
+
+if  [ "$status" == "status playing" ]; then
+	ffmpeg -y -i "$file" "$icon"
+	notify-send -t 5000 -i "$icon" "$title" "$artist\n$album"
+fi

@@ -7,7 +7,7 @@
 bspwindows() {
 case "${1:-active}" in
     active)
-    bspc query -N -n .local.descendant_of.window.leaf.!fullscreen
+    #bspc query -N -n .local.descendant_of.window.leaf.!fullscreen
     ;;
     inactive)
     bspc query -N -n .local.!descendant_of.window.leaf.!fullscreen

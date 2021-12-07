@@ -1,1 +1,2 @@
-~/bin/box
+sysinfo
+disks

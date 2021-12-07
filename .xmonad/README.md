@@ -54,7 +54,7 @@
 
 ### ScartchPads 
 
-I made heavy use of NamedScratchpad before my discovery of [tdrop](https://github.com/noctuid/tdrop) by noctuid. 
+I made heavy use of NamedScratchpad before my migration to [tdrop](https://github.com/agonzal/dotfiles/tree/main/bin/tdrop). 
 
 - ScratchPads for :
    - kitty (with --class scratchpad)
