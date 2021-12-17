@@ -1,2 +1,1 @@
 sysinfo
-disks

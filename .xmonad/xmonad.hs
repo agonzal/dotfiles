@@ -125,6 +125,7 @@ import XMonad.Layout.Minimize
 import XMonad.Layout.SimpleFloat 
 import XMonad.Layout.NoBorders
 import XMonad.Layout.ResizableTile (MirrorResize (..), ResizableTall (..))
+import XMonad.Layout.ResizableThreeColumns (ResizableThreeCol (..))
 import XMonad.Layout.Spacing (Border (Border), spacingRaw)
 import XMonad.Layout.Tabbed
 import XMonad.Layout.TabBarDecoration
@@ -623,6 +624,7 @@ myLogHook = fadeInactiveLogHook 0.7
 myStartupHook = do
   spawn "~/bin/autolock.sh &"
   spawn "blueman-applet &"
+  spawn "autorandr desktop"
   spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &"
   spawnOnce "nm-applet &"
   spawnOnce "greenclip daemon"
@@ -637,17 +639,9 @@ myStartupHook = do
   spawn "~/.config/polybar/launch.sh xmonad"
   spawn "telegram-desktop"
   spawn "nitrogen --restore"
-  spawn myBrowser 
+  spawnOnce myBrowser 
   setWMName "LG3D"
   ewmhDesktopsStartup
-
--- Run xmonad with the settings you specify. No need to modify this.
-
-
-     --dbus <- D.connectSession
-     -- Request access to the DBus name
-     --D.requestName dbus (D.busName_ "org.xmonad.Log")
-         --[D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
 mkDbusClient :: IO D.Client
 mkDbusClient = do
@@ -673,7 +667,7 @@ main = mkDbusClient>>= main'
 main' :: D.Client -> IO ()
 main' dbus = xmonad $ ewmh $ docks $ fullscreenSupport $ defaults  
  where
-  myBar = "polybar -c ~/.config/polybar/config.ini -r"
+  myBar = "polybar xmonad -c ~/.config/polybar/config.ini -r"
   
 --  xmonad $ fullscreenSupport $ docks $ ewmh defaults
 

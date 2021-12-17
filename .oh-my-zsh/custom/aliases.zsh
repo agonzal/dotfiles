@@ -35,9 +35,6 @@ alias ll='lsd -Al'
 alias ls='lsd -A'
 alias use='xrdb merge ~/.Xresources'
 alias load='kill -USR1 $(pidof st)'
-alias disks='echo "╓───── d i s k . u s a g e";\
-			       echo "╙────────────────────────────────────── ─ ─ "; \
-			       df -h;'
 alias cpu='watch ps -Ao user,uid,comm,pid,pcpu,tty --sort=-pcpu | head -n 6'
 
 
