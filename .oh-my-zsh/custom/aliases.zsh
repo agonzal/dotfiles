@@ -8,6 +8,7 @@ alias analysis='cd ~/analysis'
 alias nfetch='neofetch --source ~/.config/neofetch/image/Archlinux-gray.png --backend kitty --colors 1 1'
 alias pacrm="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
 alias t='todo.sh'
+alias tb='taskbook'
 alias nv='nvim' 
 alias vi='nvim' 
 alias weather="curl 'wttr.in/?T'"
@@ -34,7 +35,7 @@ alias icat="kitty +kitten icat"
 alias ll='lsd -Al'
 alias ls='lsd -A'
 alias use='xrdb merge ~/.Xresources'
-alias load='kill -USR1 $(pidof st)'
+alias load="kill -USR1 $(pidof st)"
 alias cpu='watch ps -Ao user,uid,comm,pid,pcpu,tty --sort=-pcpu | head -n 6'
 
 

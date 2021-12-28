@@ -506,7 +506,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) =
       -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
-myLayout = minimize $ subTabbed $ B.boringWindows $ defaultFancyBorders (avoidStruts ( centered |||  tiled ||| tabs ))
+myLayout = minimize $ subTabbed $ B.boringWindows $ defaultFancyBorders (avoidStruts ( centered ||| sidedecor tiled ||| sidedecor tabs ))
   where
     -- avoidStruts( defaultFancyBorders tiled ||| defaultFancyBorders simpleFloat ||| tabs)
 
@@ -526,7 +526,7 @@ myLayout = minimize $ subTabbed $ B.boringWindows $ defaultFancyBorders (avoidSt
 
     centered = ThreeColMid 1 (3 / 100) (1 / 2)
 
-    -- sidedecor = decoration shrinkText standardTheme (SideDecoration L)
+    sidedecor = decoration shrinkText standardTheme (SideDecoration L)
 
 myManageHook =
   fullscreenManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
